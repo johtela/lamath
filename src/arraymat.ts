@@ -1,4 +1,4 @@
-import { Vec, Vec2, Vec3, Vec4 } from "./vectors";
+import { Vec, Vec3 } from "./vectors";
 import { NewMat, NewMat4, Mat2, Mat3, Mat4 } from "./matrices";
 import * as FMath from "./fmath"
 import * as ArrayHelper from "./arrayext";
@@ -367,7 +367,7 @@ class ArrayMat implements Mat2, Mat3, Mat4
     equals (other: ArrayMat): boolean
     {
         return this.array.every (
-            function (v, i, a)
+            function (v, i)
             {
                 return v === other.array[i]
             })
@@ -376,7 +376,7 @@ class ArrayMat implements Mat2, Mat3, Mat4
     approxEquals (other: ArrayMat, epsilon?: number): boolean
     {
         return this.array.every (
-            function (v, i, a)
+            function (v, i)
             {
                 return FMath.approxEquals (v, other.array[i], epsilon)
             })

@@ -1,5 +1,5 @@
 import * as FMath from "./fmath"
-import { Dim, Vec, Vec2, Vec3, Vec4, NewVec } from "./vectors"
+import { Dim, Vec2, Vec3, Vec4, NewVec } from "./vectors"
 import * as ArrayExt from "./arrayext"
 
 class NewArrayVec implements NewVec<Vec2>, NewVec<Vec3>, NewVec<Vec4>
@@ -51,7 +51,7 @@ class ArrayVec implements Vec2, Vec3, Vec4
 
     with (index: number, value: number): ArrayVec
     {
-        return new ArrayVec (this.array.map ((v, i, a) => i == index ? value : v))
+        return new ArrayVec (this.array.map ((v, i) => i == index ? value : v))
     }
 
     get x (): number { return this.array[Dim.x] }
@@ -144,7 +144,7 @@ class ArrayVec implements Vec2, Vec3, Vec4
     equals (other: ArrayVec): boolean
     {
         return this.array.every (
-            function (v, i, a)
+            function (v, i)
             {
                 return v === other.array[i]
             })
@@ -153,7 +153,7 @@ class ArrayVec implements Vec2, Vec3, Vec4
     approxEquals (other: ArrayVec, epsilon: number = 0.000001): boolean
     {
         return this.array.every (
-            function (v, i, a)
+            function (v, i)
             {
                 return FMath.approxEquals (v, other.array[i], epsilon)
             })
@@ -162,7 +162,7 @@ class ArrayVec implements Vec2, Vec3, Vec4
     dot (other: ArrayVec): number
     {
         return this.array.reduce (
-            function (c: number, v: number, i: number, a: number[])
+            function (c: number, v: number, i: number)
             {
                 return c + (v * other.array[i]) 
             }, 0)

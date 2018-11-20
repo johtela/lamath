@@ -1,4 +1,4 @@
-import { Equatable } from "./Equatable";
+import { Equatable } from "./equatable";
 
 /**
  * Enumeration that defines the coordinate dimensions used in the vector types.

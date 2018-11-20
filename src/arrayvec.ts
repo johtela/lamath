@@ -1,6 +1,6 @@
-import * as FMath from "./FMath"
-import { Dim, Vec, Vec2, Vec3, Vec4, NewVec } from "./Vectors"
-import * as ArrayExt from "./ArrayExt"
+import * as FMath from "./fmath"
+import { Dim, Vec, Vec2, Vec3, Vec4, NewVec } from "./vectors"
+import * as ArrayExt from "./arrayext"
 
 class NewArrayVec implements NewVec<Vec2>, NewVec<Vec3>, NewVec<Vec4>
 {

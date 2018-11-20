@@ -1,5 +1,5 @@
-import { Equatable } from "./Equatable"
-import { Vec, Vec2, Vec3, Vec4 } from "./Vectors"
+import { Equatable } from "./equatable"
+import { Vec, Vec2, Vec3, Vec4 } from "./vectors"
 
 export interface Mat<M extends Mat<M>> extends Equatable<M>
 {

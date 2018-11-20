@@ -1,0 +1,11 @@
+export declare const twoPI: number;
+export declare const PIover2: number;
+export declare const PIover4: number;
+export declare const PIover8: number;
+export declare const PIover16: number;
+export declare function approxEquals(x: number, y: number, epsilon?: number): boolean;
+export declare function fract(x: number): number;
+export declare function clamp(x: number, min: number, max: number): number;
+export declare function mix(start: number, end: number, interPos: number): number;
+export declare function step(edge: number, value: number): number;
+export declare function smoothStep(edgeLower: number, edgeUpper: number, value: number): number;

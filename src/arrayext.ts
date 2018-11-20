@@ -22,3 +22,16 @@ export function fill<T> (array: T[], value: T): T[]
         array[i] = value
     return array
 }
+
+/**
+ * Fill an array of a specified size with a same value.
+ * @param value The value used to fill an array.
+ * @param count Number of times the value is repeated.
+ */
+export function repeat<T> (value: T, count: number): T[]
+{
+    var res = Array<T> (count)
+    for (var i = 0; i < count; i++)
+        res[i] = value
+    return res;
+}

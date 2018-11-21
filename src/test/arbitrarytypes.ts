@@ -2,9 +2,9 @@
 
 import * as jsc from "jsverify"
 import * as ArrayExt from "../arrayext";
-import { NewVec, Vec, Vec2, Vec3, Vec4 } from "../vectors"
+import { Vec2, Vec3, Vec4 } from "../vectors"
 import { newVec2, newVec3, newVec4 } from "../arrayvec"
-import { NewMat, NewMat4, Mat, Mat2, Mat3, Mat4 } from "../matrices";
+import { Mat2, Mat3, Mat4 } from "../matrices";
 import { newMat2, newMat3, newMat4 } from "../arraymat";
 
 export function numArr (size: number): jsc.Arbitrary<number[]>

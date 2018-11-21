@@ -2,9 +2,9 @@
 
 import * as jsc from "jsverify"
 import { approxEquals } from "../fmath"
-import { NewVec, Vec, Vec2, Vec3, Vec4 } from "../vectors"
+import { Vec } from "../vectors"
 import { newVec2, newVec3, newVec4 } from "../arrayvec"
-import { NewMat, NewMat4, Mat, Mat2, Mat3, Mat4 } from "../matrices"
+import { NewMat, Mat } from "../matrices"
 import { newMat2, newMat3, newMat4 } from "../arraymat"
 import * as Arb from "./arbitrarytypes"
 
@@ -127,7 +127,6 @@ function rotationXY<M extends Mat<M>, V extends Vec<V>> (
 function inverse<M extends Mat<M>> (arb: jsc.Arbitrary<M>, newMat: NewMat<M>)
 {
     let ident = newMat.identity
-    let zero = newMat.zero
     let d = ident.rows
     jsc.property (`Mat${d}: m * m^-1 = I when det(m) != 0`, 
         jsc.suchthat (arb, m => m.determinant () != 0),  

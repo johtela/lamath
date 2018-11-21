@@ -2,7 +2,7 @@
 
 import * as jsc from "jsverify"
 import { approxEquals } from "../fmath"
-import { NewVec, Vec, Vec2, Vec3, Vec4 } from "../vectors"
+import { NewVec, Vec } from "../vectors"
 import { newVec2, newVec3, newVec4 } from "../arrayvec"
 import * as Arb from "./arbitrarytypes"
 import * as ArrayExt from "../arrayext"

@@ -1,3 +1,5 @@
+import { Equatable } from "./equatable";
+
 /**
  * Clone a 2D array.
  * @param array - The array to be cloned.
@@ -34,4 +36,37 @@ export function repeat<T> (value: T, count: number): T[]
     for (var i = 0; i < count; i++)
         res[i] = value
     return res;
+}
+
+/**
+ * Return the sum of numbers in an array.
+ * @param array The array to be summed.
+ */
+export function sum (array: number[]): number
+{
+    let res = 0
+    for (var item of array)
+        res += item
+    return res
+}
+
+/**
+ * Return a copy of an array with duplicate items removed.
+ * @param array The input array.
+ */
+export function distinct<T extends Equatable<T>> (array: T[]): T[]
+{
+    let firstOccurence = (item: T, index: number) => array.findIndex (i => i.equals (item)) === index
+    return array.filter (firstOccurence)    
+}
+
+/**
+ * The flatMap() method first maps each element using a mapping function, 
+ * then flattens the result into a new array.
+ * @param array The array of items to be flattened.
+ * @param selector Function that returns an array for a given item.
+ */
+export function flatMap<T, U> (array: T[], selector: (item: T) => U[]): U[]
+{
+    return new Array<U> ().concat (...array.map (selector))
 }

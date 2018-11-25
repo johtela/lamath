@@ -15,6 +15,7 @@
   },
   "author": "Tommi Johtela",
   "license": "MPL-2.0",
+  "keywords": ["math", "linear-algebra", "vector", "matrix", "webgl", "typescript"],
   "bugs": {
     "url": "https://github.com/johtela/lamath/issues"
   },

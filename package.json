@@ -7,7 +7,8 @@
     "test": "mocha ./lib/test/*tests.js",
     "build": "tsc",
     "prepare": "npm run build",
-    "prepublishOnly": "npm test"
+    "prepublishOnly": "npm test",
+    "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",

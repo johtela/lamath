@@ -1,6 +1,6 @@
 {
   "name": "lamath",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Linear algebra math library for Javascript/Typescript",
   "main": "lib/index.js",
   "scripts": {
@@ -16,7 +16,14 @@
   },
   "author": "Tommi Johtela",
   "license": "MPL-2.0",
-  "keywords": ["math", "linear-algebra", "vector", "matrix", "webgl", "typescript"],
+  "keywords": [
+    "math",
+    "linear-algebra",
+    "vector",
+    "matrix",
+    "webgl",
+    "typescript"
+  ],
   "bugs": {
     "url": "https://github.com/johtela/lamath/issues"
   },

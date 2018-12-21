@@ -1,5 +1,4 @@
 import * as FMath from "./fmath"
-import { fun } from "jsverify";
 /**
  * Enumeration that defines the coordinate dimensions used in the vector types.
  */
@@ -46,7 +45,7 @@ export module Vec {
      * 
      * swizzle ([Dim.x, Dim.x, Dim.y])
      */
-    export function swizzle(v: Vector, coords: Dim[]): Vector {
+    export function swizzle(v: Vector, ...coords: Dim[]): Vector {
         var res = new Array(coords.length)
         for (var i = 0; i < res.length; i++)
             res[i] = v[coords[i]]
@@ -253,9 +252,9 @@ export module Vec {
     /**
      * Replace the components of the vector with values in range [0, 1] depending 
      * on how close they are to the lower and upper edge value. If a component is 
-     * less that lower edge it gets value 0. Converely, if a component is greater
-     * than upper edge, it gets value 1. If a component is between lower and upper
-     * edge, its value is smoothly interpolated between zero and one.
+     * less that lower edge it gets value 0. Conversely, if it is greater than the
+     * upper edge, it gets value 1. If a component is between lower and upper edge, 
+     * its value is smoothly interpolated between zero and one.
      * @param v The input and result vector.
      * @param edgeLower The lower edge to which the components are compared.
      * @param edgeUpper The upper edge to which the components are compared.

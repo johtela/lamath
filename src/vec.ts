@@ -1,12 +1,15 @@
 import * as FMath from "./fmath"
 /**
- * Enumeration that defines the coordinate dimensions used in the vector types.
+ * Coordinate dimensions used in the vector types.
  */
 export const x = 0;
 export const y = 1;
 export const z = 2;
 export const w = 3;
 
+/**
+ * Vector is represented by an array of numbers.
+ */
 export type Vector = number[];
 
 /**
@@ -16,6 +19,7 @@ export type Vector = number[];
 export function zero(dim: number): Vector {
     return unif(dim, 0);
 }
+
 /**
  * Initializes a vector with the same value in all components.
  * @param dim Vector dimension.
@@ -24,12 +28,14 @@ export function zero(dim: number): Vector {
 export function unif(dim: number, value: number) {
     return new Array<number>(dim).fill(value);
 }
+
 /**
  * Returns the vector dimension, i.e. number of components.
  */
 export function dimension(v: Vector): number {
     return v.length;
 }
+
 /**
  * Return one or more components of the vector in arbitrary order. The components
  * returned depend on the dimensions specified in the coords argument. Note that
@@ -45,6 +51,7 @@ export function swizzle(v: Vector, ...coords: number[]): Vector {
         res[i] = v[coords[i]]
     return res;
 }
+
 /**
  * The lenght of the vector squared. Faster to calculate than the actual length,
  * and useful for comparing vector magnitudes.
@@ -56,12 +63,14 @@ export function lenSqr(v: Vector): number {
         res += v[i] * v[i];
     return res;
 }
+
 /**
  * Length of the vector.
  */
 export function len(v: Vector): number {
     return Math.sqrt(lenSqr(v))
 }
+
 /**
  * Invert a vector.
  * @param v Vector to be inverted.
@@ -73,6 +82,7 @@ export function inv(v: Vector, out: Vector = v): Vector {
         out[i] = -v[i];
     return out;
 }
+
 /**
  * Add the second vector to the first one componentwise.
  * @param v Input vector.
@@ -89,6 +99,7 @@ export function add(v: Vector, other: Vector | number, out: Vector = v): Vector 
             out[i] = v[i] + other[i];
     return out;
 }
+
 /**
  * Subtract the second vector from the first one componentwise.
  * @param v Input vector.
@@ -105,6 +116,7 @@ export function sub(v: Vector, other: Vector | number, out: Vector = v): Vector 
             out[i] = v[i] - other[i];
     return out;
 }
+
 /**
  * Multiply the first vector with the second one componentwise.
  * @param v Input vector.
@@ -121,6 +133,7 @@ export function mul(v: Vector, other: Vector | number, out: Vector = v): Vector 
             out[i] = v[i] * other[i];
     return out;
 }
+
 /**
  * Divide the first vector by the second one componentwise.
  * @param v Input vector.
@@ -137,6 +150,7 @@ export function div(v: Vector, other: Vector | number, out: Vector = v): Vector 
             out[i] = v[i] + other[i];
     return out;
 }
+
 /**
  * Normalize a vector.
  */
@@ -149,6 +163,7 @@ export function norm(v: Vector, out: Vector = v): Vector {
         out[i] = v[i] / l;
     return out;
 }
+
 /**
  * Checks if the first vector is approximately same as the second one.
  * @param v1 First vector
@@ -164,6 +179,7 @@ export function approxEquals(v1: Vector, v2: Vector, epsilon?: number): boolean 
             return false;
     return true;
 }
+
 /**
  * Return the dot product of two vectors.
  * @param v Input vector.
@@ -176,6 +192,7 @@ export function dot(v: Vector, other: Vector): number {
         res += v[i] * other[i]; 
     return res;
 }
+
 /**
  * Return the cross product of two vectors. The vectors must be 3-dimensional.
  * @param v Input vector.
@@ -190,6 +207,7 @@ export function cross(v: Vector, other: Vector): Vector {
     v[y] = v[x] * other[y] - v[y] * other[x]
     return v;
 }
+
 /**
  * Replace components of the vector with their absolute values.
  * @param v Input vector.
@@ -201,6 +219,7 @@ export function abs(v: Vector, out: Vector = v): Vector {
         out[i] = Math.abs(v[i]);
     return out;
 }
+
 /**
  * Run the components of the vector through Math.floor function.
  * @param v Input vector.
@@ -212,6 +231,7 @@ export function floor(v: Vector, out: Vector = v): Vector {
         out[i] = Math.floor(v[i]);
     return out;
 }
+
 /**
  * Run the components of the vector through Math.ceil function.
  * @param v Input vector.
@@ -223,6 +243,7 @@ export function ceil(v: Vector, out: Vector = v): Vector {
         out[i] = Math.ceil(v[i]);
     return out;
 }
+
 /**
  * Run the components of the vector through Math.round function.
  * @param v Input vector.
@@ -234,6 +255,7 @@ export function round(v: Vector, out: Vector = v): Vector {
         out[i] = Math.round(v[i]);
     return out;
 }
+
 /**
  * Run the components of the vector through FMath.fract function.
  * @param v Input vector.
@@ -245,6 +267,7 @@ export function fract(v: Vector, out: Vector = v): Vector {
         out[i] = FMath.fract(v[i]);
     return out;
 }
+
 /**
  * Calculate the minimum of two vectors componentwise.
  * @param v The input vector.
@@ -257,6 +280,7 @@ export function min(v: Vector, other: Vector, out: Vector = v): Vector {
         out[i] = Math.min(v[i], other[i]);
     return out;
 }
+
 /**
  * Calculate the maximum of two vectors componentwise.
  * @param v The input vector.
@@ -269,6 +293,7 @@ export function max(v: Vector, other: Vector, out: Vector = v): Vector {
         out[i] = Math.max(v[i], other[i]);
     return out;
 }
+
 /**
  * Clamp the components of a vector to a given range.
  * @param v The input vector.
@@ -282,6 +307,7 @@ export function clamp(v: Vector, min: number, max: number, out: Vector = v): Vec
         out[i] = FMath.clamp(v[i], min, max);
     return out;
 }
+
 /**
  * Calculate the interpolated vector in a given position [0, 1].
  * @param v The input vector.
@@ -295,8 +321,9 @@ export function mix(v: Vector, other: Vector, interPos: number, out: Vector = v)
         out[i] = FMath.mix(v[i], other[i], interPos);
     return out;
 }
+
 /**
- * Replace the components of the vector with values 0 or 1 depending if they are 
+ * Return a vector of zeros and ones depending if the input vector components are 
  * greater or less than the edge value.
  * @param v The input vector.
  * @param edge The edge to which the components are compared.
@@ -308,9 +335,10 @@ export function step(v: Vector, edge: number, out: Vector = v): Vector {
         out[i] = FMath.step(v[i], edge);
     return out;
 }
+
 /**
- * Replace the components of the vector with values in range [0, 1] depending 
- * on how close they are to the lower and upper edge value. If a component is 
+ * Return a vector with components in range [0, 1] depending on how close the
+ * input vector values are to the lower and upper edge value. If a component is 
  * less that lower edge it gets value 0. Conversely, if it is greater than the
  * upper edge, it gets value 1. If a component is between lower and upper edge, 
  * its value is smoothly interpolated between zero and one.
@@ -326,6 +354,7 @@ export function smoothStep(v: Vector, edgeLower: number, edgeUpper: number,
         out[i] = FMath.smoothStep(v[i], edgeLower, edgeUpper);
     return out;
 }
+
 /**
  * Returns the string representation of a vector formatted like this: [x y z]
  */

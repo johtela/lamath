@@ -25,8 +25,23 @@ export function zero(dim: number): Vector {
  * @param dim Vector dimension.
  * @param value Value for components.
  */
-export function unif(dim: number, value: number) {
+export function unif(dim: number, value: number): Vector {
     return new Array<number>(dim).fill(value);
+}
+
+/**
+ * Return a copy of the input vector but with different dimension.
+ * @param vec The input vector.
+ * @param dim The dimension of the new vector.
+ * @param pad The value used to pad the new vector, if dimension is greater
+ * than originally.
+ */
+export function redim (vec: Vector, dim: number, pad: number = 1): Vector {
+    let len = vec.length;
+    let res = new Array(dim);
+    for (let i = 0; i < dim; ++i)
+        res[i] = i < len ? vec[i] : pad;
+    return res;
 }
 
 /**
@@ -199,13 +214,13 @@ export function dot(v: Vector, other: Vector): number {
  * @param other The other vector of the cross product.
  * @param out Result vector.
  */
-export function cross(v: Vector, other: Vector): Vector {
+export function cross(v: Vector, other: Vector, out: Vector = v): Vector {
     if (v.length != 3 || other.length != 3)
         throw RangeError(`Both vectors must 3-dimensional.`)
-    v[x] = v[y] * other[z] - v[z] * other[y]
-    v[y] = v[z] * other[x] - v[x] * other[z]
-    v[y] = v[x] * other[y] - v[y] * other[x]
-    return v;
+    out[x] = v[y] * other[z] - v[z] * other[y]
+    out[y] = v[z] * other[x] - v[x] * other[z]
+    out[y] = v[x] * other[y] - v[y] * other[x]
+    return out;
 }
 
 /**

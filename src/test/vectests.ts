@@ -47,7 +47,7 @@ function normalize(dim: number) {
     let arb = Arb.arbvec(dim);
     let zero = Vec.zero(dim);
 
-    jsc.property(`Vector${dim}: |norm (v)| = 1 when v != ${zero}`,
+    jsc.property(`Vector${dim}: |norm (v)| = 1 when v != ${Vec.toString(zero)}`,
         jsc.suchthat(arb, v => !Vec.equals(v, zero)),
         v => approxEquals(Vec.len(Vec.norm(v)), 1));
 }
@@ -57,18 +57,18 @@ function dotProduct(dim: number) {
     let zero = Vec.zero(dim);
 
     var nonzero = jsc.suchthat(arb, v => !Vec.equals(v, zero));
-    jsc.property(`Vector${dim}: -1 <= norm(v1) . norm(v2) <= 1 when v1, v2 != ${zero}`,
+    jsc.property(`Vector${dim}: -1 <= norm(v1) . norm(v2) <= 1 when v1, v2 != ${Vec.toString(zero)}`,
         nonzero, nonzero,
         (v1, v2) => {
             let dp = Vec.dot(Vec.norm(v1), Vec.norm(v2));
             return -1 <= dp && dp <= 1;
         });
 
-    jsc.property(`Vector${dim}: v1 . v2 == (v1 . norm(v2)) * |v2| when v2 != ${zero}`,
+    jsc.property(`Vector${dim}: v1 . v2 == (v1 . norm(v2)) * |v2| when v2 != ${Vec.toString(zero)}`,
         arb, nonzero,
         (v1, v2) => approxEquals(Vec.dot(v1, v2), Vec.dot(v1, Vec.norm(v2)) * Vec.len(v2)));
 
-    jsc.property(`Vector${dim}: v1 . v2 == (v2 . norm(v1)) * |v1| when v1 != ${zero}`,
+    jsc.property(`Vector${dim}: v1 . v2 == (v2 . norm(v1)) * |v1| when v1 != ${Vec.toString(zero)}`,
         nonzero, arb,
         (v1, v2) => approxEquals(Vec.dot(v1, v2), Vec.dot(v2, Vec.norm(v1)) * Vec.len(v1)));
 }
@@ -103,10 +103,10 @@ describe("vector dot product", () => {
         dotProduct(i);
 })
 
-describe("vec3 cross product", () => {
+describe("vector3 cross product", () => {
     let zero = Vec.zero(3);
     let nonzero = jsc.suchthat(Arb.arbvec(3), v => !Vec.equals(v, zero));
-    jsc.property(`Vec3: norm(v1) x norm(v2) . norm(v1|v2) = 1 when v1, v2 != [0 0 0]`,
+    jsc.property(`Vector3: norm(v1) x norm(v2) . norm(v1|v2) = 1 when v1, v2 != [0 0 0]`,
         nonzero, nonzero,
         (v1, v2) => {
             let v1n = Vec.norm(v1);

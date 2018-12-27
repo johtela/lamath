@@ -1,4 +1,5 @@
-import { Vector, x, y, z, redim, inv, norm, cross } from "./vec";
+import { Vector, x, y, z } from "./vec";
+import * as Vec from "./vec";
 import * as ArrayExt from "./arrayext";
 import * as FMath from "./fmath";
 /**
@@ -24,6 +25,18 @@ export function create(rows: number, cols: number): Matrix {
 
 export function fromArray(rows: number, cols: number, array: number[]): Matrix {
     return [rows, cols, ...array];
+}
+
+export function redim(m: Matrix, rows: number, cols: number): Matrix {
+    let res = new Array(rows * cols + 2);
+    res[0] = rows;
+    res[1] = cols;
+    let r = m[0];
+    let c = m[1];
+    for (let i = 0; i < cols; ++i)
+        for (let j = 0; j < rows; ++j)
+            res[i * rows + j + 2] = i < c && j < r ? m[i * r + j + 2] : 0; 
+    return res;
 }
 
 export function zero(rows: number, cols: number): Matrix {
@@ -121,9 +134,9 @@ export function orthographic(left: number, right: number, bottom: number, top: n
 }
 
 export function lookAt(direction: Vector, up: Vector): Matrix {
-    let zaxis = norm(inv(direction));
-    let xaxis = norm(cross(up, zaxis));
-    let yaxis = cross(zaxis, xaxis);
+    let zaxis = Vec.norm(Vec.inv(direction));
+    let xaxis = Vec.norm(Vec.cross(up, zaxis));
+    let yaxis = Vec.cross(zaxis, xaxis);
 
     return [4, 4,
         xaxis[x], yaxis[x], zaxis[x], 0,
@@ -195,7 +208,7 @@ export function transform(mat: Matrix, vec: Vector): Vector {
     let cols = mat[1];
     let len = vec.length;
     if (len < cols)
-        vec = redim(vec, cols);
+        vec = Vec.redim(vec, cols);
     let vecm = [cols, 1, ...vec];
     return mul(mat, vecm).slice(2);
 }

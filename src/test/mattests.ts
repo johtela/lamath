@@ -107,7 +107,7 @@ function rotationZ(dim: number) {
             Vec.len(Mat.transform(Mat.rotationZ(dim, a), v)),
             Vec.len(v)));
 
-    jsc.property(`Matrix${dim}: M(v1) . M(v2)  = v1 . v2 where M = rotateZ (a) and v1, v2 != ${zero}`,
+    jsc.property(`Matrix${dim}: M(v1) . M(v2)  = v1 . v2 where M = rotateZ (a) and v1, v2 != ${Vec.toString(zero)}`,
         arbnz, arbnz, jsc.number,
         (v1, v2, a) => {
             let m = Mat.rotationZ(dim, a);
@@ -129,7 +129,7 @@ function rotationXY(dim: number) {
             Vec.len(v)));
 
     jsc.property(`Matrix${dim}: M(v1) . M(v2)  = v1 . v2 where ` +
-        `M = rotateX (a) * rotateY (b) and v1, v2 != ${zero}`,
+        `M = rotateX (a) * rotateY (b) and v1, v2 != ${Vec.toString(zero)}`,
         arbnz, arbnz, jsc.number, jsc.number,
         (v1, v2, a, b) => {
             let m = Mat.mul(Mat.rotationX(dim, a), Mat.rotationY(dim, b));

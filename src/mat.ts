@@ -44,7 +44,7 @@ export function translation(dim: number, offsets: number[]): Matrix {
     let res = identity(dim);
     let lastCol = (dim - 1) * dim + 2;
     let lastRow = Math.min(offsets.length, dim - 1);
-    for (let i = 0; i < lastRow; i++)
+    for (let i = 0; i < lastRow; ++i)
         res[lastCol + i] = offsets[i]
     return res;
 }
@@ -52,7 +52,7 @@ export function translation(dim: number, offsets: number[]): Matrix {
 export function scaling(dim: number, factors: number[]): Matrix {
     let res = identity(dim);
     let len = Math.min(factors.length, dim);
-    for (let i = 0; i < len; i++)
+    for (let i = 0; i < len; ++i)
         res[i * dim + i + 2] = factors[i];
     return res;
 }
@@ -213,7 +213,7 @@ export function transpose(mat: Matrix): Matrix {
 export function determinant(mat: Matrix): number {
     let luMatrix = toJaggedArray(mat);
     let result = decomposeFA(mat[0], mat[1], luMatrix)[1];
-    for (let i = 0; i < luMatrix.length; i++)
+    for (let i = 0; i < luMatrix.length; ++i)
         result *= luMatrix[i][i];
     return result;
 }
@@ -262,7 +262,7 @@ function decomposeFA(rows: number, cols: number, luMatrix: number[][]):
         throw RangeError("Cannot decompose non-square matrix")
     // set up row permutation result
     let perm = Array<number>(rows)
-    for (let i = 0; i < rows; i++)
+    for (let i = 0; i < rows; ++i)
         perm[i] = i
     // toggle tracks row swaps. +1 -> even, -1 -> odd. used by MatrixDeterminant
     let toggle = 1;

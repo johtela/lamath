@@ -1,5 +1,3 @@
-import { Equatable } from "./equatable";
-
 /**
  * Clone a 2D array.
  * @param array - The array to be cloned.
@@ -11,18 +9,6 @@ export function clone<T> (array: T[][]): T[][]
     for (let r = 0; r < rows; r++)
         res[r] = array[r].slice ()
     return res
-}
-
-/**
- * Fill a whole array with a same value, and return it back.
- * @param array The array to be filled and returned.
- * @param value The value used to fill the array.
- */
-export function fill<T> (array: T[], value: T): T[]
-{
-    for (var i = 0; i < array.length; i++)
-        array[i] = value
-    return array
 }
 
 /**
@@ -48,16 +34,6 @@ export function sum (array: number[]): number
     for (var item of array)
         res += item
     return res
-}
-
-/**
- * Return a copy of an array with duplicate items removed.
- * @param array The input array.
- */
-export function distinct<T extends Equatable<T>> (array: T[]): T[]
-{
-    let firstOccurence = (item: T, index: number) => array.findIndex (i => i.equals (item)) === index
-    return array.filter (firstOccurence)    
 }
 
 /**

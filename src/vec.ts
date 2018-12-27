@@ -91,7 +91,7 @@ export function len(v: Vector): number {
  * @param v Vector to be inverted.
  * @param out Result vector.
  */
-export function inv(v: Vector, out: Vector = v): Vector {
+export function inv(v: Vector, out: Vector = new Array(v.length)): Vector {
     let len = v.length;
     for (let i = 0; i < len; ++i)
         out[i] = -v[i];
@@ -104,7 +104,8 @@ export function inv(v: Vector, out: Vector = v): Vector {
  * @param other Vector or number to be added.
  * @param out Result vector.
  */
-export function add(v: Vector, other: Vector | number, out: Vector = v): Vector {
+export function add(v: Vector, other: Vector | number, 
+    out: Vector = new Array(v.length)): Vector {
     let len = v.length;
     if (typeof other === 'number')
         for (let i = 0; i < len; ++i)
@@ -121,7 +122,8 @@ export function add(v: Vector, other: Vector | number, out: Vector = v): Vector 
  * @param other Vector or number to be subtracted.
  * @param out Result vector.
  */
-export function sub(v: Vector, other: Vector | number, out: Vector = v): Vector {
+export function sub(v: Vector, other: Vector | number, 
+    out: Vector = new Array(v.length)): Vector {
     let len = v.length;
     if (typeof other === 'number')
         for (let i = 0; i < len; ++i)
@@ -138,7 +140,8 @@ export function sub(v: Vector, other: Vector | number, out: Vector = v): Vector 
  * @param other Multiplier vector or number.
  * @param out Result vector.
  */
-export function mul(v: Vector, other: Vector | number, out: Vector = v): Vector {
+export function mul(v: Vector, other: Vector | number, 
+    out: Vector = new Array(v.length)): Vector {
     let len = v.length;
     if (typeof other === 'number')
         for (let i = 0; i < len; ++i)
@@ -155,21 +158,22 @@ export function mul(v: Vector, other: Vector | number, out: Vector = v): Vector 
  * @param other Divider vector or number.
  * @param out Result vector.
  */
-export function div(v: Vector, other: Vector | number, out: Vector = v): Vector {
+export function div(v: Vector, other: Vector | number, 
+    out: Vector = new Array(v.length)): Vector {
     let len = v.length;
     if (typeof other === 'number')
         for (let i = 0; i < len; ++i)
-            out[i] = v[i] + other;
+            out[i] = v[i] / other;
     else
         for (let i = 0; i < len; ++i)
-            out[i] = v[i] + other[i];
+            out[i] = v[i] / other[i];
     return out;
 }
 
 /**
  * Normalize a vector.
  */
-export function norm(v: Vector, out: Vector = v): Vector {
+export function norm(v: Vector, out: Vector = new Array(v.length)): Vector {
     let l = len(v)
     if (l == 0)
         throw RangeError("Cannot normalize zero vector")
@@ -177,6 +181,21 @@ export function norm(v: Vector, out: Vector = v): Vector {
     for (let i = 0; i < vlen; ++i)
         out[i] = v[i] / l;
     return out;
+}
+
+/**
+ * Checks if the first vector is same as the second one.
+ * @param v1 First vector
+ * @param v2 Second vector
+ */
+export function equals(v1: Vector, v2: Vector): boolean {
+    let len = v1.length;
+    if (len != v2.length)
+        return false;
+    for (let i = 0; i < len; ++i)
+        if (v1[i] != v2[i])
+            return false;
+    return true;
 }
 
 /**
@@ -214,12 +233,13 @@ export function dot(v: Vector, other: Vector): number {
  * @param other The other vector of the cross product.
  * @param out Result vector.
  */
-export function cross(v: Vector, other: Vector, out: Vector = v): Vector {
+export function cross(v: Vector, other: Vector, 
+    out: Vector = new Array(v.length)): Vector {
     if (v.length != 3 || other.length != 3)
         throw RangeError(`Both vectors must 3-dimensional.`)
     out[x] = v[y] * other[z] - v[z] * other[y]
     out[y] = v[z] * other[x] - v[x] * other[z]
-    out[y] = v[x] * other[y] - v[y] * other[x]
+    out[z] = v[x] * other[y] - v[y] * other[x]
     return out;
 }
 
@@ -228,7 +248,7 @@ export function cross(v: Vector, other: Vector, out: Vector = v): Vector {
  * @param v Input vector.
  * @param out Result vector.
  */
-export function abs(v: Vector, out: Vector = v): Vector {
+export function abs(v: Vector, out: Vector = new Array(v.length)): Vector {
     let len = v.length;
     for (let i = 0; i < len; ++i)
         out[i] = Math.abs(v[i]);
@@ -240,7 +260,7 @@ export function abs(v: Vector, out: Vector = v): Vector {
  * @param v Input vector.
  * @param out Result vector.
  */
-export function floor(v: Vector, out: Vector = v): Vector {
+export function floor(v: Vector, out: Vector = new Array(v.length)): Vector {
     let len = v.length;
     for (let i = 0; i < len; ++i)
         out[i] = Math.floor(v[i]);
@@ -252,7 +272,7 @@ export function floor(v: Vector, out: Vector = v): Vector {
  * @param v Input vector.
  * @param out Result vector.
  */
-export function ceil(v: Vector, out: Vector = v): Vector {
+export function ceil(v: Vector, out: Vector = new Array(v.length)): Vector {
     let len = v.length;
     for (let i = 0; i < len; ++i)
         out[i] = Math.ceil(v[i]);
@@ -264,7 +284,7 @@ export function ceil(v: Vector, out: Vector = v): Vector {
  * @param v Input vector.
  * @param out Result vector.
  */
-export function round(v: Vector, out: Vector = v): Vector {
+export function round(v: Vector, out: Vector = new Array(v.length)): Vector {
     let len = v.length;
     for (let i = 0; i < len; ++i)
         out[i] = Math.round(v[i]);
@@ -276,7 +296,7 @@ export function round(v: Vector, out: Vector = v): Vector {
  * @param v Input vector.
  * @param out Result vector.
  */
-export function fract(v: Vector, out: Vector = v): Vector {
+export function fract(v: Vector, out: Vector = new Array(v.length)): Vector {
     let len = v.length;
     for (let i = 0; i < len; ++i)
         out[i] = FMath.fract(v[i]);
@@ -289,7 +309,8 @@ export function fract(v: Vector, out: Vector = v): Vector {
  * @param other The vector to compare with.
  * @param out Result vector.
  */
-export function min(v: Vector, other: Vector, out: Vector = v): Vector {
+export function min(v: Vector, other: Vector, 
+    out: Vector = new Array(v.length)): Vector {
     let len = v.length;
     for (let i = 0; i < len; ++i)
         out[i] = Math.min(v[i], other[i]);
@@ -302,7 +323,8 @@ export function min(v: Vector, other: Vector, out: Vector = v): Vector {
  * @param other The vector to compare with.
  * @param out Result vector.
  */
-export function max(v: Vector, other: Vector, out: Vector = v): Vector {
+export function max(v: Vector, other: Vector, 
+    out: Vector = new Array(v.length)): Vector {
     let len = v.length;
     for (let i = 0; i < len; ++i)
         out[i] = Math.max(v[i], other[i]);
@@ -316,7 +338,8 @@ export function max(v: Vector, other: Vector, out: Vector = v): Vector {
  * @param max Maximum component value.
  * @param out Result vector.
  */
-export function clamp(v: Vector, min: number, max: number, out: Vector = v): Vector {
+export function clamp(v: Vector, min: number, max: number, 
+    out: Vector = new Array(v.length)): Vector {
     let len = v.length;
     for (let i = 0; i < len; ++i)
         out[i] = FMath.clamp(v[i], min, max);
@@ -330,7 +353,8 @@ export function clamp(v: Vector, min: number, max: number, out: Vector = v): Vec
  * @param interPos The position between 0 and 1, zero representing v and one other.
  * @param out Result vector.
  */
-export function mix(v: Vector, other: Vector, interPos: number, out: Vector = v): Vector {
+export function mix(v: Vector, other: Vector, interPos: number, 
+    out: Vector = new Array(v.length)): Vector {
     let len = v.length;
     for (let i = 0; i < len; ++i)
         out[i] = FMath.mix(v[i], other[i], interPos);
@@ -344,7 +368,8 @@ export function mix(v: Vector, other: Vector, interPos: number, out: Vector = v)
  * @param edge The edge to which the components are compared.
  * @param out Result vector.
  */
-export function step(v: Vector, edge: number, out: Vector = v): Vector {
+export function step(v: Vector, edge: number, 
+    out: Vector = new Array(v.length)): Vector {
     let len = v.length;
     for (let i = 0; i < len; ++i)
         out[i] = FMath.step(v[i], edge);
@@ -363,7 +388,7 @@ export function step(v: Vector, edge: number, out: Vector = v): Vector {
  * @param out Result vector.
  */
 export function smoothStep(v: Vector, edgeLower: number, edgeUpper: number, 
-    out: Vector = v): Vector {
+    out: Vector = new Array(v.length)): Vector {
     let len = v.length;
     for (let i = 0; i < len; ++i)
         out[i] = FMath.smoothStep(v[i], edgeLower, edgeUpper);

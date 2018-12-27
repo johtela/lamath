@@ -2,127 +2,118 @@
 
 import * as jsc from "jsverify"
 import { approxEquals } from "../fmath"
-import { NewVec, Vec } from "../vectors"
-import { newVec2, newVec3, newVec4 } from "../arrayvec"
+import * as Vec from "../vec"
 import * as Arb from "./arbitrarytypes"
 import * as ArrayExt from "../arrayext"
 
-function addAndSubtract<V extends Vec<V>> (arb: jsc.Arbitrary<V>, zero: V)
-{
-    let dim = zero.dimensions
-    jsc.property (`Vec${dim}: v - v = ${zero}`, arb, 
-        v => v.sub (v).equals (zero))
-    jsc.property (`Vec${dim}: v1 - v2 = v1 + (-v2)`, arb, arb, 
-        (v1, v2) => v1.sub (v2).equals (v1.add (v2.inv ())))
-    jsc.property (`Vec${dim}: |v + v| = 2 * |v|`, arb,  
-        v => v.add (v).len === 2 * v.len)
+function addAndSubtract(dim: number) {
+    let arb = Arb.arbvec(dim);
+    let zero = Vec.zero(dim);
+
+    jsc.property(`Vector${dim}: v - v = ${zero}`, arb,
+        v => Vec.equals(Vec.sub(v, v), zero));
+
+    jsc.property(`Vector${dim}: v1 - v2 = v1 + (-v2)`, arb, arb,
+        (v1, v2) => Vec.equals(Vec.sub(v1, v2), Vec.add(v1, Vec.inv(v2))));
+
+    jsc.property(`Vector${dim}: |v + v| = 2 * |v|`, arb,
+        v => Vec.len(Vec.add(v, v)) === 2 * Vec.len(v));
 }
 
-function multiplyWithScalar<V extends Vec<V>> (arb: jsc.Arbitrary<V>)
-{
-    let dim = arb.generator (0).dimensions
-    jsc.property (`Vec${dim}: |v * s| = |s| * |v|`, arb, jsc.number,  
-        (v, s) => approxEquals ((v.mul (s)).len, Math.abs (s) * v.len))
+function multiplyWithScalar(dim: number) {
+    let arb = Arb.arbvec(dim);
+
+    jsc.property(`Vector${dim}: |v * s| = |s| * |v|`, arb, jsc.number,
+        (v, s) => approxEquals(Math.abs(s) * Vec.len(v), Vec.len(Vec.mul(v, s))));
 }
 
-function multiplyWithVector<V extends Vec<V>> (arb: jsc.Arbitrary<V>, 
-    newVec: NewVec<V>)
-{
-    let dim = arb.generator (0).dimensions
-    jsc.property (`Vec${dim}: v * s = v * v.${ArrayExt.repeat('s', dim)}`, 
-        arb, jsc.number,  
-        (v, s) => v.mul (s).approxEquals (v.mul (newVec.unif (s))))
+function multiplyWithVector(dim: number) {
+    let arb = Arb.arbvec(dim);
+
+    jsc.property(`Vector${dim}: v * s = v * v.${ArrayExt.repeat('s', dim)}`,
+        arb, jsc.number,
+        (v, s) => Vec.approxEquals(Vec.mul(v, s), Vec.mul(v, Vec.unif(dim, s))));
 }
 
-function divideWithScalar<V extends Vec<V>> (arb: jsc.Arbitrary<V>)
-{
-    let dim = arb.generator (0).dimensions
-    jsc.property (`Vec${dim}: v / s = v * (1 / s) when s != 0`, 
-        arb, jsc.suchthat (jsc.number, s => s != 0),  
-        (v, s) => v.div (s).approxEquals (v.mul (1 / s)))
+function divideWithScalar(dim: number) {
+    let arb = Arb.arbvec(dim);
+
+    jsc.property(`Vector${dim}: v / s = v * (1 / s) when s != 0`,
+        arb, jsc.suchthat(jsc.number, s => s != 0),
+        (v, s) => Vec.approxEquals(Vec.div(v, s), Vec.mul(v, 1 / s)));
 }
 
-function normalize<V extends Vec<V>> (arb: jsc.Arbitrary<V>, zero: V)
-{
-    let dim = arb.generator (0).dimensions
-    jsc.property (`Vec${dim}: |norm (v)| = 1 when v != ${zero}`, 
-        jsc.suchthat (arb, v => !v.equals (zero)), 
-        v => approxEquals (v.norm ().len, 1))
+function normalize(dim: number) {
+    let arb = Arb.arbvec(dim);
+    let zero = Vec.zero(dim);
+
+    jsc.property(`Vector${dim}: |norm (v)| = 1 when v != ${zero}`,
+        jsc.suchthat(arb, v => !Vec.equals(v, zero)),
+        v => approxEquals(Vec.len(Vec.norm(v)), 1));
 }
 
-function dotProduct<V extends Vec<V>> (arb: jsc.Arbitrary<V>, zero: V)
-{
-    let dim = arb.generator (0).dimensions
-    var nonzero = jsc.suchthat (arb, v => !v.equals (zero))
-    jsc.property (`Vec${dim}: -1 <= norm(v1) . norm(v2) <= 1 when v1, v2 != ${zero}`, 
+function dotProduct(dim: number) {
+    let arb = Arb.arbvec(dim);
+    let zero = Vec.zero(dim);
+
+    var nonzero = jsc.suchthat(arb, v => !Vec.equals(v, zero));
+    jsc.property(`Vector${dim}: -1 <= norm(v1) . norm(v2) <= 1 when v1, v2 != ${zero}`,
         nonzero, nonzero,
-        (v1, v2) => 
-        {
-            let dp = v1.norm ().dot (v2.norm ()) 
-            return -1 <= dp && dp <= 1
-        })
-    jsc.property (`Vec${dim}: v1 . v2 == (v1 . norm(v2)) * |v2| when v2 != ${zero}`,
+        (v1, v2) => {
+            let dp = Vec.dot(Vec.norm(v1), Vec.norm(v2));
+            return -1 <= dp && dp <= 1;
+        });
+
+    jsc.property(`Vector${dim}: v1 . v2 == (v1 . norm(v2)) * |v2| when v2 != ${zero}`,
         arb, nonzero,
-        (v1, v2) => approxEquals (v1.dot (v2), v1.dot (v2.norm ()) * v2.len))
-    jsc.property (`Vec${dim}: v1 . v2 == (v2 . norm(v1)) * |v1| when v1 != ${zero}`,
-        nonzero, arb, 
-        (v1, v2) => approxEquals (v1.dot (v2), v2.dot (v1.norm ()) * v1.len))
+        (v1, v2) => approxEquals(Vec.dot(v1, v2), Vec.dot(v1, Vec.norm(v2)) * Vec.len(v2)));
+
+    jsc.property(`Vector${dim}: v1 . v2 == (v2 . norm(v1)) * |v1| when v1 != ${zero}`,
+        nonzero, arb,
+        (v1, v2) => approxEquals(Vec.dot(v1, v2), Vec.dot(v2, Vec.norm(v1)) * Vec.len(v1)));
 }
 
-describe ("vector addition and subtraction", () =>
-{
-    addAndSubtract (Arb.vec2, newVec2.zero)
-    addAndSubtract (Arb.vec3, newVec3.zero)
-    addAndSubtract (Arb.vec4, newVec4.zero)
+describe("vector addition and subtraction", () => {
+    for (let i = 2; i < 5; ++i)
+        addAndSubtract(i);
 })
 
-describe ("vector multiplication with scalar", () =>
-{
-    multiplyWithScalar (Arb.vec2)
-    multiplyWithScalar (Arb.vec3)
-    multiplyWithScalar (Arb.vec4)
+describe("vector multiplication with scalar", () => {
+    for (let i = 2; i < 5; ++i)
+        multiplyWithScalar(i);
 })
 
-describe ("vector multiplication with vector", () =>
-{
-    multiplyWithVector (Arb.vec2, newVec2)
-    multiplyWithVector (Arb.vec3, newVec3)
-    multiplyWithVector (Arb.vec4, newVec4)
+describe("vector multiplication with vector", () => {
+    for (let i = 2; i < 5; ++i)
+        multiplyWithVector(i);
 })
 
-describe ("vector division with scalar", () =>
-{
-    divideWithScalar (Arb.vec2)
-    divideWithScalar (Arb.vec3)
-    divideWithScalar (Arb.vec4)
+describe("vector division with scalar", () => {
+    for (let i = 2; i < 5; ++i)
+        divideWithScalar(i);
 })
 
-describe ("vector normalization", () =>
-{
-    normalize (Arb.vec2, newVec2.zero)
-    normalize (Arb.vec3, newVec3.zero)
-    normalize (Arb.vec4, newVec4.zero)
+describe("vector normalization", () => {
+    for (let i = 2; i < 5; ++i)
+        normalize(i);
 })
 
-describe ("vector dot product", () =>
-{
-    dotProduct (Arb.vec2, newVec2.zero)
-    dotProduct (Arb.vec3, newVec3.zero)
-    dotProduct (Arb.vec4, newVec4.zero)
+describe("vector dot product", () => {
+    for (let i = 2; i < 5; ++i)
+        dotProduct(i);
 })
 
-describe ("vec3 cross product", () =>
-{
-    var nonzero = jsc.suchthat (Arb.vec3, v => !v.equals (newVec3.zero))
-    jsc.property (`Vec3: norm(v1) x norm(v2) . norm(v1|v2) = 1 when v1, v2 != [0 0 0]`, 
+describe("vec3 cross product", () => {
+    let zero = Vec.zero(3);
+    let nonzero = jsc.suchthat(Arb.arbvec(3), v => !Vec.equals(v, zero));
+    jsc.property(`Vec3: norm(v1) x norm(v2) . norm(v1|v2) = 1 when v1, v2 != [0 0 0]`,
         nonzero, nonzero,
-        (v1, v2) =>
-        {
-            let v1n = v1.norm ()
-            let v2n = v2.norm ()
-            let cr = v1n.cross (v2n)
-            let dt1 = cr.dot (v1n)
-            let dt2 = cr.dot (v2n)
-            return approxEquals (dt1, 0) && approxEquals (dt2, 0)
+        (v1, v2) => {
+            let v1n = Vec.norm(v1);
+            let v2n = Vec.norm(v2);
+            let cr = Vec.cross(v1n, v2n);
+            let dt1 = Vec.dot(cr, v1n);
+            let dt2 = Vec.dot(cr, v2n);
+            return approxEquals(dt1, 0) && approxEquals(dt2, 0);
         })
 })

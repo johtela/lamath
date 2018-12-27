@@ -77,9 +77,9 @@ export function rotationY(dim: number, angle: number): Matrix {
     let sina = Math.sin(angle);
     let cosa = Math.cos(angle);
     res[2] = cosa;
-    res[3] = -sina;
+    res[4] = -sina;
     res[2 * dim + 2] = sina;
-    res[2 * dim + 3] = cosa;
+    res[2 * dim + 4] = cosa;
     return res;
 }
 
@@ -121,9 +121,9 @@ export function orthographic(left: number, right: number, bottom: number, top: n
 }
 
 export function lookAt(direction: Vector, up: Vector): Matrix {
-    let zaxis = norm(inv(direction, new Array(3)));
-    let xaxis = norm(cross(up, zaxis, new Array(3)));
-    let yaxis = cross(zaxis, xaxis, new Array(3));
+    let zaxis = norm(inv(direction));
+    let xaxis = norm(cross(up, zaxis));
+    let yaxis = cross(zaxis, xaxis);
 
     return [4, 4,
         xaxis[x], yaxis[x], zaxis[x], 0,
@@ -132,7 +132,8 @@ export function lookAt(direction: Vector, up: Vector): Matrix {
         0, 0, 0, 1];
 }
 
-export function add(mat: Matrix, other: Matrix | number, out: Matrix = mat): Matrix {
+export function add(mat: Matrix, other: Matrix | number, 
+    out: Matrix = create(mat[0], mat[1])): Matrix {
     let len = mat.length;
     if (typeof other === "number")
         for (let i = 2; i < len; ++i)
@@ -146,7 +147,8 @@ export function add(mat: Matrix, other: Matrix | number, out: Matrix = mat): Mat
     return out;
 }
 
-export function sub(mat: Matrix, other: Matrix | number, out: Matrix = mat): Matrix {
+export function sub(mat: Matrix, other: Matrix | number, 
+    out: Matrix = create(mat[0], mat[1])): Matrix {
     let len = mat.length;
     if (typeof other === "number")
         for (let i = 2; i < len; ++i)
@@ -189,13 +191,13 @@ export function mul(mat: Matrix, other: Matrix | number): Matrix {
     }
 }
 
-export function transform(vec: Vector, mat: Matrix): Vector {
+export function transform(mat: Matrix, vec: Vector): Vector {
     let cols = mat[1];
     let len = vec.length;
     if (len < cols)
         vec = redim(vec, cols);
     let vecm = [cols, 1, ...vec];
-    return mul(mat, vecm).slice(2, len);
+    return mul(mat, vecm).slice(2);
 }
 
 export function transpose(mat: Matrix): Matrix {
@@ -319,6 +321,14 @@ function helperSolvef(luMatrix: number[][], vector: number[]): number[] {
     return res;
 }
 
+export function equals(mat: Matrix, other: Matrix): boolean {
+    let len = mat.length;
+    for (let i = 0; i < len; ++i)
+        if (mat[i] != other[i])
+            return false;
+    return true;
+}
+
 export function approxEquals(mat: Matrix, other: Matrix, epsilon?: number): boolean {
     if (mat[0] != other[0] || mat[1] != other[1])
         return false;
@@ -339,6 +349,10 @@ export function toString(mat: Matrix): string {
         res += "]\n";
     }
     return res;
+}
+
+export function toArray(mat: Matrix): number[] {
+    return mat.slice(2);
 }
 
 export function toFloat32Array(mat: Matrix): Float32Array {

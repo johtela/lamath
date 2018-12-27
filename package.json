@@ -32,6 +32,7 @@
     "@types/mocha": "^5.2.5",
     "jsverify": "^0.8.4",
     "mocha": "^5.2.0",
+    "ts-node": "^7.0.1",
     "typescript": "^3.1.6"
   }
 }

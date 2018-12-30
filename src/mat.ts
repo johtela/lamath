@@ -8,6 +8,10 @@ import * as FMath from "./fmath";
  */
 export type Matrix = number[];
 
+const invalidElementCount = "There must be rows x cols elements in the array";
+const dimAtLeast3 = "The matrix dimension must be at least 3.";
+const dimMismatch = "Matrices must have same dimensions";
+
 export function dimensions(m: Matrix): [number, number] {
     return [m[0], m[1]];
 }
@@ -24,10 +28,13 @@ export function create(rows: number, cols: number): Matrix {
 }
 
 export function fromArray(rows: number, cols: number, array: number[]): Matrix {
+    if (array.length != rows * cols)
+        throw RangeError(invalidElementCount);
     return [rows, cols, ...array];
 }
 
-export function redim(m: Matrix, rows: number, cols: number): Matrix {
+export function redim(m: Matrix, rows: number, cols: number, pad: number = 0)
+    : Matrix {
     let res = new Array(rows * cols + 2);
     res[0] = rows;
     res[1] = cols;
@@ -35,7 +42,7 @@ export function redim(m: Matrix, rows: number, cols: number): Matrix {
     let c = m[1];
     for (let i = 0; i < cols; ++i)
         for (let j = 0; j < rows; ++j)
-            res[i * rows + j + 2] = i < c && j < r ? m[i * r + j + 2] : 0; 
+            res[i * rows + j + 2] = [i * r + j + 2] || pad; 
     return res;
 }
 
@@ -72,7 +79,7 @@ export function scaling(dim: number, factors: number[]): Matrix {
 
 export function rotationX(dim: number, angle: number): Matrix {
     if (dim < 3)
-        throw RangeError("The matrix dimension must be at least 3.")
+        throw RangeError(dimAtLeast3)
     let res = identity(dim);
     let sina = Math.sin(angle);
     let cosa = Math.cos(angle);
@@ -85,7 +92,7 @@ export function rotationX(dim: number, angle: number): Matrix {
 
 export function rotationY(dim: number, angle: number): Matrix {
     if (dim < 3)
-        throw RangeError("The matrix dimension must be at least 3.");
+        throw RangeError(dimAtLeast3);
     let res = identity(dim);
     let sina = Math.sin(angle);
     let cosa = Math.cos(angle);
@@ -153,7 +160,7 @@ export function add(mat: Matrix, other: Matrix | number,
             out[i] = mat[i] + other;
     else {
         if (mat[0] != other[0] || mat[1] != other[1])
-            throw RangeError("Matrices must have same dimensions.");
+            throw RangeError(dimMismatch);
         for (let i = 2; i < len; ++i)
             out[i] = mat[i] + other[i];
     }
@@ -168,7 +175,7 @@ export function sub(mat: Matrix, other: Matrix | number,
             out[i] = mat[i] - other;
     else {
         if (mat[0] != other[0] || mat[1] != other[1])
-            throw RangeError("Matrices must have same dimensions.");
+            throw RangeError(dimMismatch);
         for (let i = 2; i < len; ++i)
             out[i] = mat[i] - other[i];
     }
@@ -335,6 +342,8 @@ function helperSolvef(luMatrix: number[][], vector: number[]): number[] {
 }
 
 export function equals(mat: Matrix, other: Matrix): boolean {
+    if (mat[0] != other[0] || mat[1] != other[1])
+        return false;
     let len = mat.length;
     for (let i = 0; i < len; ++i)
         if (mat[i] != other[i])

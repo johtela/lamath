@@ -341,48 +341,48 @@ export function max(vec: Vector, other: Vector,
 
 /**
  * Clamp the components of a vector to a given range.
- * @param v The input vector.
+ * @param vec The input vector.
  * @param min Minimum component value.
  * @param max Maximum component value.
  * @param out Result vector.
  */
-export function clamp(v: Vector, min: number, max: number,
-    out: Vector = new Array(v.length)): Vector {
-    let len = v.length;
+export function clamp(vec: Vector, min: number, max: number,
+    out: Vector = new Array(vec.length)): Vector {
+    let len = vec.length;
     for (let i = 0; i < len; ++i)
-        out[i] = FMath.clamp(v[i], min, max);
+        out[i] = FMath.clamp(vec[i], min, max);
     return out;
 }
 
 /**
  * Calculate the interpolated vector in a given position [0, 1].
- * @param v The input vector.
+ * @param vec The input vector.
  * @param other The vector to be interpolated to.
  * @param interPos The position between 0 and 1, zero representing v and one other.
  * @param out Result vector.
  */
-export function mix(v: Vector, other: Vector, interPos: number,
-    out: Vector = new Array(v.length)): Vector {
-    let len = v.length;
+export function mix(vec: Vector, other: Vector, interPos: number,
+    out: Vector = new Array(vec.length)): Vector {
+    let len = vec.length;
     if (other.length != len)
         throw RangeError(dimMismatch);
     for (let i = 0; i < len; ++i)
-        out[i] = FMath.mix(v[i], other[i], interPos);
+        out[i] = FMath.mix(vec[i], other[i], interPos);
     return out;
 }
 
 /**
  * Return a vector of zeros and ones depending if the input vector components are 
  * greater or less than the edge value.
- * @param v The input vector.
+ * @param vec The input vector.
  * @param edge The edge to which the components are compared.
  * @param out Result vector.
  */
-export function step(v: Vector, edge: number,
-    out: Vector = new Array(v.length)): Vector {
-    let len = v.length;
+export function step(vec: Vector, edge: number,
+    out: Vector = new Array(vec.length)): Vector {
+    let len = vec.length;
     for (let i = 0; i < len; ++i)
-        out[i] = FMath.step(v[i], edge);
+        out[i] = FMath.step(vec[i], edge);
     return out;
 }
 
@@ -392,22 +392,22 @@ export function step(v: Vector, edge: number,
  * less that lower edge it gets value 0. Conversely, if it is greater than the
  * upper edge, it gets value 1. If a component is between lower and upper edge, 
  * its value is smoothly interpolated between zero and one.
- * @param v The input vector.
+ * @param vec The input vector.
  * @param edgeLower The lower edge to which the components are compared.
  * @param edgeUpper The upper edge to which the components are compared.
  * @param out Result vector.
  */
-export function smoothStep(v: Vector, edgeLower: number, edgeUpper: number,
-    out: Vector = new Array(v.length)): Vector {
-    let len = v.length;
+export function smoothStep(vec: Vector, edgeLower: number, edgeUpper: number,
+    out: Vector = new Array(vec.length)): Vector {
+    let len = vec.length;
     for (let i = 0; i < len; ++i)
-        out[i] = FMath.smoothStep(v[i], edgeLower, edgeUpper);
+        out[i] = FMath.smoothStep(vec[i], edgeLower, edgeUpper);
     return out;
 }
 
 /**
  * Returns the string representation of a vector formatted like this: [x y z]
  */
-export function toString(v: Vector): string {
-    return "[" + v.join(" ") + "]"
+export function toString(vec: Vector): string {
+    return "[" + vec.join(" ") + "]"
 }

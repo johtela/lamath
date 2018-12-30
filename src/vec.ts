@@ -10,12 +10,14 @@ export const w = 3;
 const dimMismatch = "Vectors must have same dimensions";
 
 /**
- * Vector is represented by an array of numbers.
+ * A vector is represented by an array of numbers. The length of the array
+ * determines the vector's dimension.
  */
 export type Vector = number[];
 
 /**
- * Initialize a zero vector with dim components.
+ * Create a vector of the scpecified dimension with all of its components 
+ * initialized to zero.
  * @param dim Vector dimension.
  */
 export function zero(dim: number): Vector {
@@ -32,7 +34,8 @@ export function unif(dim: number, value: number): Vector {
 }
 
 /**
- * Return a copy of the input vector but with different dimension.
+ * Return a copy of the input vector in different dimension. Resizes the
+ * vector and fills possible new components with the specified padding value.
  * @param vec The input vector.
  * @param dim The dimension of the new vector.
  * @param pad The value used to pad the new vector, if dimension is greater
@@ -46,10 +49,10 @@ export function redim(vec: Vector, dim: number, pad: number = 1): Vector {
 }
 
 /**
- * Returns the vector dimension, i.e. number of components.
+ * Returns the vector's dimension, i.e. its number of components.
  */
-export function dimension(v: Vector): number {
-    return v.length;
+export function dimension(vec: Vector): number {
+    return vec.length;
 }
 
 /**
@@ -60,293 +63,279 @@ export function dimension(v: Vector): number {
  * 
  * swizzle ([x, x, y])
  */
-export function swizzle(v: Vector, ...coords: number[]): Vector {
+export function swizzle(vec: Vector, ...coords: number[]): Vector {
     let len = coords.length;
     let res = new Array(len)
     for (let i = 0; i < len; ++i)
-        res[i] = v[coords[i]]
+        res[i] = vec[coords[i]]
     return res;
 }
 
 /**
- * The lenght of the vector squared. Faster to calculate than the actual length,
- * and useful for comparing vector magnitudes.
+ * Return the lenght of a vector squared. This is faster to calculate than the
+ * actual length since taking the square root is omitted. The value is useful 
+ * for comparing vectors' magnitudes.
  */
-export function lenSqr(v: Vector): number {
+export function lenSqr(vec: Vector): number {
     let res = 0;
-    let len = v.length;
+    let len = vec.length;
     for (let i = 0; i < len; ++i)
-        res += v[i] * v[i];
+        res += vec[i] * vec[i];
     return res;
 }
 
 /**
- * Length of the vector.
+ * Return the length of a vector.
  */
-export function len(v: Vector): number {
-    return Math.sqrt(lenSqr(v))
+export function len(vec: Vector): number {
+    return Math.sqrt(lenSqr(vec))
 }
 
 /**
- * Invert a vector.
- * @param v Vector to be inverted.
+ * Invert a vector, i.e. flip the signs of all its components.
+ * @param vec Vector to be inverted.
  * @param out Result vector.
  */
-export function inv(v: Vector, out: Vector = new Array(v.length)): Vector {
-    let len = v.length;
+export function inv(vec: Vector, out: Vector = new Array(vec.length)): Vector {
+    let len = vec.length;
     for (let i = 0; i < len; ++i)
-        out[i] = -v[i];
+        out[i] = -vec[i];
     return out;
 }
 
 /**
- * Add the second vector to the first one componentwise.
- * @param v Input vector.
- * @param other Vector or number to be added.
+ * Add a vector or scalar to the input vector componentwise.
+ * @param vec Input vector.
+ * @param other Vector or scalar to be added.
  * @param out Result vector.
  */
-export function add(v: Vector, other: Vector | number,
-    out: Vector = new Array(v.length)): Vector {
-    let len = v.length;
+export function add(vec: Vector, other: Vector | number,
+    out: Vector = new Array(vec.length)): Vector {
+    let len = vec.length;
     if (typeof other === 'number')
         for (let i = 0; i < len; ++i)
-            out[i] = v[i] + other;
+            out[i] = vec[i] + other;
     else {
         if (other.length != len)
             throw RangeError(dimMismatch);
         for (let i = 0; i < len; ++i)
-            out[i] = v[i] + other[i];
+            out[i] = vec[i] + other[i];
     }
     return out;
 }
 
 /**
- * Subtract the second vector from the first one componentwise.
- * @param v Input vector.
- * @param other Vector or number to be subtracted.
+ * Subtract a vector or scalar from the input vector componentwise.
+ * @param vec Input vector.
+ * @param other Vector or scalar to be subtracted.
  * @param out Result vector.
  */
-export function sub(v: Vector, other: Vector | number,
-    out: Vector = new Array(v.length)): Vector {
-    let len = v.length;
+export function sub(vec: Vector, other: Vector | number,
+    out: Vector = new Array(vec.length)): Vector {
+    let len = vec.length;
     if (typeof other === 'number')
         for (let i = 0; i < len; ++i)
-            out[i] = v[i] - other;
+            out[i] = vec[i] - other;
     else {
         if (other.length != len)
             throw RangeError(dimMismatch);
         for (let i = 0; i < len; ++i)
-            out[i] = v[i] - other[i];
+            out[i] = vec[i] - other[i];
     }
     return out;
 }
 
 /**
- * Multiply the first vector with the second one componentwise.
- * @param v Input vector.
- * @param other Multiplier vector or number.
+ * Multiply the input vector componentwise with another vector or scalar.
+ * @param vec Input vector.
+ * @param other Multiplier vector or scalar.
  * @param out Result vector.
  */
-export function mul(v: Vector, other: Vector | number,
-    out: Vector = new Array(v.length)): Vector {
-    let len = v.length;
+export function mul(vec: Vector, other: Vector | number,
+    out: Vector = new Array(vec.length)): Vector {
+    let len = vec.length;
     if (typeof other === 'number')
         for (let i = 0; i < len; ++i)
-            out[i] = v[i] * other;
+            out[i] = vec[i] * other;
     else {
         if (other.length != len)
             throw RangeError(dimMismatch);
         for (let i = 0; i < len; ++i)
-            out[i] = v[i] * other[i];
+            out[i] = vec[i] * other[i];
     }
     return out;
 }
 
 /**
- * Divide the first vector by the second one componentwise.
- * @param v Input vector.
+ * Divide the input vector by another vector or scalar componentwise.
+ * @param vec Input vector.
  * @param other Divider vector or number.
  * @param out Result vector.
  */
-export function div(v: Vector, other: Vector | number,
-    out: Vector = new Array(v.length)): Vector {
-    let len = v.length;
+export function div(vec: Vector, other: Vector | number,
+    out: Vector = new Array(vec.length)): Vector {
+    let len = vec.length;
     if (typeof other === 'number')
         for (let i = 0; i < len; ++i)
-            out[i] = v[i] / other;
+            out[i] = vec[i] / other;
     else {
         if (other.length != len)
             throw RangeError(dimMismatch);
         for (let i = 0; i < len; ++i)
-            out[i] = v[i] / other[i];
+            out[i] = vec[i] / other[i];
     }
     return out;
 }
 
 /**
- * Normalize a vector.
+ * Normalize a vector by dividing its components by its length. If the 
+ * vector's lenght is zero, meaning that all of its components are zero, then
+ * the function throws an error.
  */
-export function norm(v: Vector, out: Vector = new Array(v.length)): Vector {
-    let l = len(v)
+export function norm(vec: Vector, out: Vector = new Array(vec.length)): Vector {
+    let l = len(vec)
     if (l == 0)
         throw RangeError("Cannot normalize zero vector")
-    let vlen = v.length;
+    let vlen = vec.length;
     for (let i = 0; i < vlen; ++i)
-        out[i] = v[i] / l;
+        out[i] = vec[i] / l;
     return out;
 }
 
 /**
- * Checks if the first vector is same as the second one.
- * @param v1 First vector
- * @param v2 Second vector
+ * Checks if two vectors are equal, i.e. they have the same dimension and 
+ * exactly same component values.
+ * @param vec1 First vector
+ * @param vec2 Second vector
  */
-export function equals(v1: Vector, v2: Vector): boolean {
-    let len = v1.length;
-    if (len != v2.length)
+export function equals(vec1: Vector, vec2: Vector): boolean {
+    let len = vec1.length;
+    if (len != vec2.length)
         return false;
     for (let i = 0; i < len; ++i)
-        if (v1[i] != v2[i])
+        if (vec1[i] != vec2[i])
             return false;
     return true;
 }
 
 /**
- * Checks if the first vector is approximately same as the second one.
- * @param v1 First vector
- * @param v2 Second vector
+ * Checks if two vectors are approximately equal. They must have the same dimension,
+ * but their components can deviate by the amount specified inthe epsilon parameter.
+ * @param vec1 First vector
+ * @param vec2 Second vector
  * @param epsilon The maximum allowed difference of any component.
  */
-export function approxEquals(v1: Vector, v2: Vector, epsilon?: number): boolean {
-    let len = v1.length;
-    if (len != v2.length)
+export function approxEquals(vec1: Vector, vec2: Vector, epsilon?: number): boolean {
+    let len = vec1.length;
+    if (len != vec2.length)
         return false;
     for (let i = 0; i < len; ++i)
-        if (!FMath.approxEquals(v1[i], v2[i], epsilon))
+        if (!FMath.approxEquals(vec1[i], vec2[i], epsilon))
             return false;
     return true;
 }
 
 /**
- * Return the dot product of two vectors.
- * @param v Input vector.
+ * Return the dot product of two vectors. The vectors must have the same dimension,
+ * otherwise an error is thrown. The result of the dot product is a scalar.
+ * @param vec Input vector.
  * @param other Other vector of the dot product.
  */
-export function dot(v: Vector, other: Vector): number {
+export function dot(vec: Vector, other: Vector): number {
     let res = 0;
-    let len = v.length;
+    let len = vec.length;
     if (other.length != len)
         throw RangeError(dimMismatch);
     for (let i = 0; i < len; ++i)
-        res += v[i] * other[i];
+        res += vec[i] * other[i];
     return res;
 }
 
 /**
  * Return the cross product of two vectors. The vectors must be 3-dimensional.
- * @param v Input vector.
+ * @param vec Input vector.
  * @param other The other vector of the cross product.
  * @param out Result vector.
  */
-export function cross(v: Vector, other: Vector,
-    out: Vector = new Array(v.length)): Vector {
-    if (v.length != 3 || other.length != 3)
+export function cross(vec: Vector, other: Vector,
+    out: Vector = new Array(3)): Vector {
+    if (vec.length != 3 || other.length != 3)
         throw RangeError(`Both vectors must 3-dimensional.`)
-    out[x] = v[y] * other[z] - v[z] * other[y]
-    out[y] = v[z] * other[x] - v[x] * other[z]
-    out[z] = v[x] * other[y] - v[y] * other[x]
+    out[x] = vec[y] * other[z] - vec[z] * other[y]
+    out[y] = vec[z] * other[x] - vec[x] * other[z]
+    out[z] = vec[x] * other[y] - vec[y] * other[x]
     return out;
 }
 
 /**
- * Replace components of the vector with their absolute values.
- * @param v Input vector.
- * @param out Result vector.
+ * Run the components of the vector through the {@link Math.abs} function.
+ * @param vec Input vector.
  */
-export function abs(v: Vector, out: Vector = new Array(v.length)): Vector {
-    let len = v.length;
-    for (let i = 0; i < len; ++i)
-        out[i] = Math.abs(v[i]);
-    return out;
+export function abs(vec: Vector): Vector {
+    return vec.map(Math.abs);
 }
 
 /**
- * Run the components of the vector through Math.floor function.
- * @param v Input vector.
- * @param out Result vector.
+ * Run the components of the vector through the {@link Math.floor} function.
+ * @param vec Input vector.
  */
-export function floor(v: Vector, out: Vector = new Array(v.length)): Vector {
-    let len = v.length;
-    for (let i = 0; i < len; ++i)
-        out[i] = Math.floor(v[i]);
-    return out;
+export function floor(vec: Vector): Vector {
+    return vec.map(Math.floor);
 }
 
 /**
- * Run the components of the vector through Math.ceil function.
- * @param v Input vector.
- * @param out Result vector.
+ * Run the components of the vector through the {@link Math.ceil} function.
+ * @param vec Input vector.
  */
-export function ceil(v: Vector, out: Vector = new Array(v.length)): Vector {
-    let len = v.length;
-    for (let i = 0; i < len; ++i)
-        out[i] = Math.ceil(v[i]);
-    return out;
+export function ceil(vec: Vector): Vector {
+    return vec.map(Math.floor);
 }
 
 /**
- * Run the components of the vector through Math.round function.
- * @param v Input vector.
- * @param out Result vector.
+ * Run the components of the vector through the {@link Math.round} function.
+ * @param vec Input vector.
  */
-export function round(v: Vector, out: Vector = new Array(v.length)): Vector {
-    let len = v.length;
-    for (let i = 0; i < len; ++i)
-        out[i] = Math.round(v[i]);
-    return out;
+export function round(vec: Vector): Vector {
+    return vec.map(Math.round);
 }
 
 /**
- * Run the components of the vector through FMath.fract function.
- * @param v Input vector.
- * @param out Result vector.
+ * Run the components of the vector through the {@link FMath.fract} function.
+ * @param vec Input vector.
  */
-export function fract(v: Vector, out: Vector = new Array(v.length)): Vector {
-    let len = v.length;
-    for (let i = 0; i < len; ++i)
-        out[i] = FMath.fract(v[i]);
-    return out;
+export function fract(vec: Vector): Vector {
+    return vec.map(FMath.fract);
 }
 
 /**
  * Calculate the minimum of two vectors componentwise.
- * @param v The input vector.
+ * @param vec The input vector.
  * @param other The vector to compare with.
  * @param out Result vector.
  */
-export function min(v: Vector, other: Vector,
-    out: Vector = new Array(v.length)): Vector {
-    let len = v.length;
+export function min(vec: Vector, other: Vector,
+    out: Vector = new Array(vec.length)): Vector {
+    let len = vec.length;
     if (other.length != len)
         throw RangeError(dimMismatch);
     for (let i = 0; i < len; ++i)
-        out[i] = Math.min(v[i], other[i]);
+        out[i] = Math.min(vec[i], other[i]);
     return out;
 }
 
 /**
  * Calculate the maximum of two vectors componentwise.
- * @param v The input vector.
+ * @param vec The input vector.
  * @param other The vector to compare with.
  * @param out Result vector.
  */
-export function max(v: Vector, other: Vector,
-    out: Vector = new Array(v.length)): Vector {
-    let len = v.length;
+export function max(vec: Vector, other: Vector,
+    out: Vector = new Array(vec.length)): Vector {
+    let len = vec.length;
     if (other.length != len)
         throw RangeError(dimMismatch);
     for (let i = 0; i < len; ++i)
-        out[i] = Math.max(v[i], other[i]);
+        out[i] = Math.max(vec[i], other[i]);
     return out;
 }
 

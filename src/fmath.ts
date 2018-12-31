@@ -29,24 +29,60 @@ export function approxEquals(x: number, y: number,
         return diff / (absX + absY) < epsilon;
 }
 
+/**
+ * Return the decimal part of a number. The integer part will be zero.
+ * @param x The input number.
+ */
 export function fract(x: number): number {
     return x - Math.floor(x);
 }
 
+/**
+ * Clamp a number into a number range.
+ * @param x The input number.
+ * @param min Minimum value of the output range.
+ * @param max Maximum value of the output range.
+ */
 export function clamp(x: number, min: number, max: number): number {
     return x < min ? min :
         x > max ? max :
             x;
 }
 
+/**
+ * Calculate a linear interpolation of two values corresponding
+ * to input positions 0 and 1. By specifying a interpolated position 
+ * < 0 or > 1 you can extrapolate backwards and forwards.
+ * @param start The value of the linear function at position 0.
+ * @param end The value of the linear function at position 1.
+ * @param interPos The interpolated position. 
+ */
 export function mix(start: number, end: number, interPos: number): number {
     return start + (interPos * (end - start));
 }
 
+/**
+ * Return zero if the input value is smaller than the edge value, and
+ * one if it is greater.
+ * @param value The input value.
+ * @param edge The edge value after which the result flips from 0 to 1.
+ */
 export function step(value: number, edge: number): number {
     return value < edge ? 0 : 1;
 }
 
+/**
+ * Return a value in range [0, 1] depending on where the input value is
+ * compared to two edge values. If the input value is smaller than the
+ * lower edge, the result is zero. Conversely, if the input value is
+ * greater than the upper edge, the result is one. If the input value is
+ * between the lower and the upper edge, the result is a quadratic (smooth) 
+ * interpolation in range of (0, 1). If lower and upper edge are the same,
+ * the result is binary like in the {@link step} function,
+ * @param value The input value.
+ * @param edgeLower The lower edge value below which the result is zero.
+ * @param edgeUpper The upper edge value after which the result is one.
+ */
 export function smoothStep(value: number, edgeLower: number, edgeUpper: number): number {
     if (edgeLower == edgeUpper)
         return step(value, edgeLower);

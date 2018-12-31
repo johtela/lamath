@@ -1,5 +1,5 @@
 /**
- * Constants for factors of Pi.
+ * Constants for factors of π.
  */
 export const twoPI = Math.PI * 2
 export const PIover2 = Math.PI / 2
@@ -38,7 +38,8 @@ export function fract(x: number): number {
 }
 
 /**
- * Clamp a number into a number range.
+ * Clamp a number into a specified range. Values outside the range
+ * will be clamped to lower and upper bounds respectively.
  * @param x The input number.
  * @param min Minimum value of the output range.
  * @param max Maximum value of the output range.
@@ -50,7 +51,7 @@ export function clamp(x: number, min: number, max: number): number {
 }
 
 /**
- * Calculate a linear interpolation of two values corresponding
+ * Calculate a linear interpolation between two values corresponding
  * to input positions 0 and 1. By specifying a interpolated position 
  * < 0 or > 1 you can extrapolate backwards and forwards.
  * @param start The value of the linear function at position 0.

@@ -1,5 +1,3 @@
-///<reference types="jsverify"/>
-
 import * as jsc from "jsverify"
 import { approxEquals } from "../fmath"
 import * as Vec from "../vec"

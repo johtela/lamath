@@ -288,7 +288,7 @@ export function floor(vec: Vector): Vector {
  * @param vec Input vector.
  */
 export function ceil(vec: Vector): Vector {
-    return vec.map(Math.floor);
+    return vec.map(Math.ceil);
 }
 
 /**

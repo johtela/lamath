@@ -15,6 +15,3 @@ are defined simply as arrays of numbers, no wrapper objects are used. This minim
 allocations and alleviates GC pressure. If required, it is possible also to reuse the vector/matrix
 arrays by explicitly specifying the result of the operations.
 
-<!--
-  Testing testing...
--->

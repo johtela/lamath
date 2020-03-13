@@ -1,5 +1,9 @@
 
-# ![Logo](images/llama.jpg) LAMATH [![Build Status](https://travis-ci.org/johtela/lamath.svg?branch=master)](https://travis-ci.org/johtela/lamath) [![NPM Package](https://badge.fury.io/js/lamath.svg)](https://www.npmjs.com/package/lamath)
+# ![Logo](images/llama.jpg) LAMATH 
+
+[![Build Status](https://travis-ci.org/johtela/lamath.svg?branch=master)](https://travis-ci.org/johtela/lamath)
+[![Version](https://img.shields.io/npm/v/lamath)](https://www.npmjs.com/package/lamath)
+
 ## Linear Algebra Math Library for Javascript/Typescript 
 
 LAMATH is a basic linear algebra library designed to be used with WebGL and Typescript. However, 

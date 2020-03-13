@@ -4,7 +4,7 @@
   "description": "Linear algebra math library for Javascript/Typescript",
   "main": "lib/index.js",
   "scripts": {
-    "test": "mocha ./lib/test/*tests.js",
+    "test": "node ./lib/test/vectests.js && node ./lib/test/mattests.js",
     "build": "tsc",
     "prepare": "npm run build",
     "prepublishOnly": "npm test",
@@ -29,10 +29,10 @@
   },
   "homepage": "https://github.com/johtela/lamath#readme",
   "devDependencies": {
-    "@types/mocha": "^5.2.5",
-    "jsverify": "^0.8.4",
-    "mocha": "^5.2.0",
-    "ts-node": "^7.0.1",
-    "typescript": "^3.1.6"
+    "@types/node": "^13.9.1",
+    "fast-check": "^1.23.0",
+    "lits-extras": "^1.0.1",
+    "litscript": "^1.1.6",
+    "ts-node": "^8.6.2"
   }
 }

@@ -17,6 +17,23 @@ export function ident(): Quot {
     return [[0, 0, 0], 1]
 }
 
+export function lenSqr([vec, w]: Quot): number {
+    return Vec.lenSqr(vec) + (w * w)
+}
+
+export function len(quot: Quot): number {
+    return Math.sqrt(lenSqr(quot))
+}
+
+export function isNorm(quot: Quot): boolean {
+    return FMath.approxEquals(lenSqr(quot), 1, 0.001)
+}
+
+export function norm(quot: Quot): Quot {
+    let l = len(quot)    
+    return [Vec.div(quot[0], l), quot[1] / l]
+}
+
 export function fromAxisAngle(axis: Vec3, angle: number): Quot {
     let lensqr = Vec.lenSqr(axis)
     if (angle == 0 || lensqr == 0)
@@ -65,8 +82,7 @@ export function rotate(quot: Quot, vec: Vec3): Vec3 {
 }
 
 export function lerp([uv1, w1]: Quot, [uv2, w2]: Quot, interPos: number): Quot {
-    //TODO: Need to normalize
-    return [Vec.mix(uv1, uv2, interPos), FMath.mix(w1, w2, interPos)]
+    return norm([Vec.mix(uv1, uv2, interPos), FMath.mix(w1, w2, interPos)])
 }
 
 export function slerp([uv1, w1]: Quot, [uv2, w2]: Quot, interPos: number): Quot {
@@ -85,4 +101,12 @@ export function slerp([uv1, w1]: Quot, [uv2, w2]: Quot, interPos: number): Quot 
     }
     let [x, y, z, w] = v1
     return [[x, y, z], w]
+}
+
+export function equals(quot: Quot, other: Quot): boolean {
+    return Vec.equals(quot[0], other[0]) && quot[1] == other[1]
+}
+
+export function toString(quot: Quot): string {
+    return `[${Vec.toString(quot[0])} ${quot[1]}]` 
 }

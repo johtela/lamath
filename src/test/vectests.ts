@@ -80,7 +80,7 @@ function componentwiseOperation(t: Assert, dim: number, oper: string,
     let arb = arbvec(dim)
 
     check(t, `Vector${dim}: ${oper}(v) = [ ${oper}(x) ${oper}(y) ... ]`,
-        fc.property(arb, v => Vec.equals(vecOper(v), v.map(numOper))))
+        fc.property(arb, v => Vec.equals(vecOper(v), <Vector>v.map(numOper))))
 }
 
 function componentwiseOperation2(t: Assert, dim: number, oper: string,
@@ -90,7 +90,8 @@ function componentwiseOperation2(t: Assert, dim: number, oper: string,
 
     check(t, `Vector${dim}: ${oper}(v1, v2) = [ ${oper}(x1, x2) ${oper}(y1, y2) ... ]`,
         fc.property(arb, arb, (v1, v2) =>
-            Vec.equals(vecOper(v1, v2), v1.map((c, i) => numOper(c, v2[i])))))
+            Vec.equals(vecOper(v1, v2), 
+                <Vector>v1.map((c, i) => numOper(c, v2[i])))))
 }
 
 function clamp(t: Assert, dim: number) {
@@ -167,7 +168,7 @@ test("vector dot product", t => {
 
 test("vector3 cross product", t => {
     let zero = Vec.zero(3)
-    let nonzero = arbvec(3).filter(v => !Vec.equals(v, zero))
+    let nonzero = arbvec<Vec.Vec3>(3).filter(v => !Vec.equals(v, zero))
     check(t, `Vector3: norm(v1) × norm(v2) ⋅ norm(v1 or v2) ≈ 0 when v1, v2 ≠ [0 0 0]`,
         fc.property(nonzero, nonzero, (v1, v2) => {
             let v1n = Vec.norm(v1)

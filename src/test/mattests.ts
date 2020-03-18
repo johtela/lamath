@@ -79,8 +79,8 @@ function translation(t: Assert, dim: number) {
 
     check(t, `Matrix${dim}: M(v1) = v1 + v2 where M = translate (v2)`, 
         fc.property(arb, arb, (v1, v2) => {
-            let vec = [ ...v1.slice(0, dim - 1), 1 ]
-            let off = [ ...v2.slice(0, dim - 1), 0 ]
+            let vec = <Vec.Vector>[ ...v1.slice(0, dim - 1), 1 ]
+            let off = <Vec.Vector>[ ...v2.slice(0, dim - 1), 0 ]
             let m = Mat.translation(dim, off)
             return Vec.equals(Mat.transform(m, vec), Vec.add(vec, off))
         }))
@@ -123,14 +123,15 @@ function rotationXY(t: Assert, dim: number) {
     check(t, `Matrix${dim}: | M(v) | = | v | where M = rotateX (a) * rotateY (b)`,
         fc.property(arb, fc.float(), fc.float(), (v, a, b) => 
             approxEquals(
-                Vec.len(Mat.transform(Mat.mul(Mat.rotationX(dim, a), 
-                    Mat.rotationY(dim, b)), v)),
+                Vec.len(Mat.transform(<Mat.SquareMatrix>Mat.mul(
+                    Mat.rotationX(dim, a), Mat.rotationY(dim, b)), v)),
                 Vec.len(v))))
 
     check(t, `Matrix${dim}: M(v1) . M(v2)  = v1 . v2 where ` +
         `M = rotateX (a) * rotateY (b) and v1, v2 != ${Vec.toString(zero)}`,
         fc.property(arbnz, arbnz, fc.float(), fc.float(), (v1, v2, a, b) => {
-            let m = Mat.mul(Mat.rotationX(dim, a), Mat.rotationY(dim, b))
+            let m = <Mat.SquareMatrix>Mat.mul(Mat.rotationX(dim, a), 
+                Mat.rotationY(dim, b))
             let vr1 = Mat.transform(m, v1)
             let vr2 = Mat.transform(m, v2)
             return approxEquals(Vec.dot(v1, v2), Vec.dot(vr1, vr2))

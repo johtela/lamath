@@ -37,7 +37,7 @@ export function toMatrix([[x, y, z], w]: Quot): Mat3 {
     var yw = y * w
     var zz = z * z
     var zw = z * w
-    return [ 3, 3,
+    return [3, 3,
         1 - 2 * (yy + zz), 2 * (xy - zw), 2 * (xz + yw),
         2 * (xy + zw), 1 - 2 * (xx + zz), 2 * (yz - xw),
         2 * (xz - yw), 2 * (yz + xw), 1 - 2 * (xx + yy)
@@ -74,12 +74,15 @@ export function slerp([uv1, w1]: Quot, [uv2, w2]: Quot, interPos: number): Quot 
     let v2 = <Vec4>[...uv2, w2]
     let dot = Vec.dot(v1, v2)
     if (dot > LERP_THRESHOLD)
-        return lerp([uv1, w1], [uv2, w2], interPos)
-    let theta = Math.acos(dot) * interPos
-    Vec.sub(v2, Vec.mul(v1, dot), v2)
-    Vec.norm(v2, v2)
-    Vec.mul(v1, Math.cos(theta), v1)
-    Vec.mul(v2, Math.sin(theta), v2)
-    let [x, y, z, w] = Vec.add(v1, v2, v1)
+        Vec.mix(v1, v2, interPos, v1)
+    else {
+        let theta = Math.acos(dot) * interPos
+        Vec.sub(v2, Vec.mul(v1, dot), v2)
+        Vec.norm(v2, v2)
+        Vec.mul(v1, Math.cos(theta), v1)
+        Vec.mul(v2, Math.sin(theta), v2)
+        Vec.add(v1, v2, v1)
+    }
+    let [x, y, z, w] = v1
     return [[x, y, z], w]
 }

@@ -45,15 +45,15 @@ export function fromAxisAngle(axis: Vec3, angle: number): Quat {
 }
 
 export function toMatrix([[x, y, z], w]: Quat): Mat3 {
-    var xx = x * x
-    var xy = x * y
-    var xz = x * z
-    var xw = x * w
-    var yy = y * y
-    var yz = y * z
-    var yw = y * w
-    var zz = z * z
-    var zw = z * w
+    let xx = x * x
+    let xy = x * y
+    let xz = x * z
+    let xw = x * w
+    let yy = y * y
+    let yz = y * z
+    let yw = y * w
+    let zz = z * z
+    let zw = z * w
     return [3, 3,
         1 - 2 * (yy + zz), 2 * (xy - zw), 2 * (xz + yw),
         2 * (xy + zw), 1 - 2 * (xx + zz), 2 * (yz - xw),

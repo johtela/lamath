@@ -1,5 +1,5 @@
 /**
- * # Quoternions
+ * # Quaternions
  */
 import * as FMath from "./fmath"
 import { Vec3, Vec4 } from "./vec"
@@ -9,32 +9,32 @@ import { Mat3 } from "./mat"
  * Note quoternion must have exactly 4 elements even though the type signature
  * does note show it.
  */
-export type Quot = [Vec3, number]
+export type Quat = [Vec3, number]
 
 const LERP_THRESHOLD = 0.99
 
-export function ident(): Quot {
+export function ident(): Quat {
     return [[0, 0, 0], 1]
 }
 
-export function lenSqr([vec, w]: Quot): number {
+export function lenSqr([vec, w]: Quat): number {
     return Vec.lenSqr(vec) + (w * w)
 }
 
-export function len(quot: Quot): number {
-    return Math.sqrt(lenSqr(quot))
+export function len(quat: Quat): number {
+    return Math.sqrt(lenSqr(quat))
 }
 
-export function isNorm(quot: Quot): boolean {
-    return FMath.approxEquals(lenSqr(quot), 1, 0.001)
+export function isNorm(quat: Quat): boolean {
+    return FMath.approxEquals(lenSqr(quat), 1, 0.001)
 }
 
-export function norm(quot: Quot): Quot {
-    let l = len(quot)    
-    return [Vec.div(quot[0], l), quot[1] / l]
+export function norm(quat: Quat): Quat {
+    let l = len(quat)    
+    return [Vec.div(quat[0], l), quat[1] / l]
 }
 
-export function fromAxisAngle(axis: Vec3, angle: number): Quot {
+export function fromAxisAngle(axis: Vec3, angle: number): Quat {
     let lensqr = Vec.lenSqr(axis)
     if (angle == 0 || lensqr == 0)
         return ident()
@@ -44,7 +44,7 @@ export function fromAxisAngle(axis: Vec3, angle: number): Quot {
     return [Vec.mul(normaxis, Math.sin(halfangle)), Math.cos(halfangle)]
 }
 
-export function toMatrix([[x, y, z], w]: Quot): Mat3 {
+export function toMatrix([[x, y, z], w]: Quat): Mat3 {
     var xx = x * x
     var xy = x * y
     var xz = x * z
@@ -61,15 +61,15 @@ export function toMatrix([[x, y, z], w]: Quot): Mat3 {
     ]
 }
 
-export function inv([vec, w]: Quot): Quot {
+export function inv([vec, w]: Quat): Quat {
     return [vec, -w]
 }
 
-export function conj([vec, w]: Quot): Quot {
+export function conj([vec, w]: Quat): Quat {
     return [vec, w]
 }
 
-export function mul([uv1, w1]: Quot, [uv2, w2]: Quot): Quot {
+export function mul([uv1, w1]: Quat, [uv2, w2]: Quat): Quat {
     let vec = Vec.mul(uv1, w2)
     Vec.add(vec, Vec.mul(uv2, w1), vec)
     Vec.add(vec, Vec.cross(uv1, uv2), vec)
@@ -77,15 +77,15 @@ export function mul([uv1, w1]: Quot, [uv2, w2]: Quot): Quot {
     return [vec, w]
 }
 
-export function rotate(quot: Quot, vec: Vec3): Vec3 {
-    return mul(mul(quot, [vec, 0]), conj(quot))[0]
+export function rotate(quat: Quat, vec: Vec3): Vec3 {
+    return mul(mul(quat, [vec, 0]), conj(quat))[0]
 }
 
-export function lerp([uv1, w1]: Quot, [uv2, w2]: Quot, interPos: number): Quot {
+export function lerp([uv1, w1]: Quat, [uv2, w2]: Quat, interPos: number): Quat {
     return norm([Vec.mix(uv1, uv2, interPos), FMath.mix(w1, w2, interPos)])
 }
 
-export function slerp([uv1, w1]: Quot, [uv2, w2]: Quot, interPos: number): Quot {
+export function slerp([uv1, w1]: Quat, [uv2, w2]: Quat, interPos: number): Quat {
     let v1 = <Vec4>[...uv1, w1]
     let v2 = <Vec4>[...uv2, w2]
     let dot = Vec.dot(v1, v2)
@@ -103,10 +103,10 @@ export function slerp([uv1, w1]: Quot, [uv2, w2]: Quot, interPos: number): Quot 
     return [[x, y, z], w]
 }
 
-export function equals(quot: Quot, other: Quot): boolean {
-    return Vec.equals(quot[0], other[0]) && quot[1] == other[1]
+export function equals(quat: Quat, other: Quat): boolean {
+    return Vec.equals(quat[0], other[0]) && quat[1] == other[1]
 }
 
-export function toString(quot: Quot): string {
-    return `[${Vec.toString(quot[0])} ${quot[1]}]` 
+export function toString(quat: Quat): string {
+    return `[${Vec.toString(quat[0])} ${quat[1]}]` 
 }

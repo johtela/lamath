@@ -66,15 +66,18 @@ export function inv([vec, w]: Quat): Quat {
 }
 
 export function conj([vec, w]: Quat): Quat {
-    return [vec, w]
+    return [Vec.inv(vec), w]
 }
 
-export function mul([uv1, w1]: Quat, [uv2, w2]: Quat): Quat {
-    let vec = Vec.mul(uv1, w2)
-    Vec.add(vec, Vec.mul(uv2, w1), vec)
-    Vec.add(vec, Vec.cross(uv1, uv2), vec)
-    let w = w1 * w2 + Vec.dot(uv1, uv2)
-    return [vec, w]
+export function mul([[x1, y1, z1], w1]: Quat, [[x2, y2, z2], w2]: Quat): Quat {
+    return [
+        [
+            w1 * x2 + w2 * x1 + y1 * z2 - y2 * z1,
+            w1 * y2 + w2 * y1 + z1 * x2 - z2 * x1,
+            w1 * z2 + w2 * z1 + x1 * y2 - x2 * y1
+        ],
+        w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2
+    ]
 }
 
 export function rotate(quat: Quat, vec: Vec3): Vec3 {

@@ -5,10 +5,7 @@ import * as FMath from "./fmath"
 import { Vec3, Vec4 } from "./vec"
 import * as Vec from "./vec"
 import { Mat3 } from "./mat"
-/**
- * Note quoternion must have exactly 4 elements even though the type signature
- * does note show it.
- */
+
 export type Quat = [Vec3, number]
 
 const LERP_THRESHOLD = 0.99
@@ -92,14 +89,21 @@ export function slerp([uv1, w1]: Quat, [uv2, w2]: Quat, interPos: number): Quat 
     let v1 = <Vec4>[...uv1, w1]
     let v2 = <Vec4>[...uv2, w2]
     let dot = Vec.dot(v1, v2)
+    if (dot < 0) {
+        Vec.inv(v1, v1)
+        dot = -dot
+    }
     if (dot > LERP_THRESHOLD)
         Vec.mix(v1, v2, interPos, v1)
     else {
-        let theta = Math.acos(dot) * interPos
-        Vec.sub(v2, Vec.mul(v1, dot), v2)
-        Vec.norm(v2, v2)
-        Vec.mul(v1, Math.cos(theta), v1)
-        Vec.mul(v2, Math.sin(theta), v2)
+        let theta0 = Math.acos(dot)
+        let theta = theta0 * interPos
+        let sintheta0 = Math.sin(theta0)
+        let sintheta = Math.sin(theta)
+        let s1 = Math.sin(theta0 - theta) / sintheta0
+        let s2 = sintheta / sintheta0
+        Vec.mul(v1, s1, v1)
+        Vec.mul(v2, s2, v2)
         Vec.add(v1, v2, v1)
     }
     let [x, y, z, w] = v1

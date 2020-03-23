@@ -29,8 +29,6 @@ export function arbPureQuat(): fc.Arbitrary<Quat> {
 }
 
 export function check<T>(test: Assert, desc: string, prop: fc.IProperty<T>) {
-    test.ok(() => { 
-        fc.assert(prop)
-        return true
-    }, desc)
+    fc.assert(prop)
+    test.ok(true, desc)
 }

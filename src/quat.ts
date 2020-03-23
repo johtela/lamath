@@ -34,7 +34,7 @@ export function len(quat: Quat): number {
 }
 
 export function isNorm(quat: Quat): boolean {
-    return FMath.approxEquals(lenSqr(quat), 1, 0.001)
+    return FMath.approxEquals(lenSqr(quat), 1)
 }
 
 export function norm(quat: Quat): Quat {
@@ -52,25 +52,32 @@ export function fromAxisAngle(angle: number, axis: Vec3): Quat {
     return [Math.cos(halfangle), Vec.mul(normaxis, Math.sin(halfangle))]
 }
 
-export function toMatrix([s, [x, y, z]]: Quat): Mat3 {
+export function toMatrix(quat: Quat): Mat3 {
+    let [s, [x, y, z]] = isNorm(quat) ? quat : norm(quat)
     let xx = x * x
     let xy = x * y
     let xz = x * z
-    let xw = x * s
+    let xs = x * s
     let yy = y * y
     let yz = y * z
-    let yw = y * s
+    let ys = y * s
     let zz = z * z
-    let zw = z * s
+    let zs = z * s
     return [3, 3,
-        1 - 2 * (yy + zz), 2 * (xy - zw), 2 * (xz + yw),
-        2 * (xy + zw), 1 - 2 * (xx + zz), 2 * (yz - xw),
-        2 * (xz - yw), 2 * (yz + xw), 1 - 2 * (xx + yy)
+        1 - 2 * (yy + zz), 2 * (xy + zs), 2 * (xz - ys),  
+        2 * (xy - zs), 1 - 2 * (xx + zz), 2 * (yz + xs), 
+        2 * (xz + ys), 2 * (yz - xs), 1 - 2 * (xx + yy)
     ]
 }
 
-export function inv([s, vec]: Quat): Quat {
-    return [-s, vec]
+export function inv(quat: Quat): Quat {
+    let res = conj(quat)
+    let ls = lenSqr(quat)
+    if (FMath.approxEquals(ls, 1))
+        return res
+    res[0] /= ls
+    Vec.div(res[1], ls, res[1])
+    return res
 }
 
 export function conj([s, vec]: Quat): Quat {

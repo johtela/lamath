@@ -1,12 +1,11 @@
 import { test } from "lits-extras/lib/tester"
 import { Assert } from "zora"
 import * as fc from "fast-check"
-import { approxEquals, fract } from "../fmath"
 import * as Vec from "../vec"
-import { Vector } from "../vec"
+import * as Mat from "../mat"
 import * as Qt from "../quat"
-import { Quat } from "../quat"
 import { check, arbQuat, arbRealQuat, arbPureQuat } from "./arbitrarytypes"
+import { FMath } from ".."
 
 function multiply(t: Assert) {
     let arbrq = arbRealQuat()
@@ -22,8 +21,8 @@ function multiply(t: Assert) {
 
     check(t, "Quat: [0, 𝐚] ⋅ [0, 𝐛] = [-𝐚 ⋅ 𝐛, 𝐚 × 𝐛]",
         fc.property(arbpq, arbpq, (q1, q2) => {
-            let [s1, a] = q1
-            let [s2, b] = q2
+            let [, a] = q1
+            let [, b] = q2
             let s = -Vec.dot(a, b)
             let v = Vec.cross(a, b)
             return Qt.approxEquals(Qt.mul(q1, q2), [s, v])
@@ -48,4 +47,26 @@ function multiply(t: Assert) {
         }))
 }
 
+function normalize(t: Assert) {
+    let arbq = arbQuat()
+
+    check(t, "Quat: |norm(q)| = 1", fc.property(arbq, q => 
+        FMath.approxEquals(Qt.len(Qt.norm(q)), 1)))
+
+    check(t, "Quat: q ⋅ q⁻¹ = [1, [0 0 0]]", fc.property(arbq, q =>
+        Qt.approxEquals(Qt.mul(q, Qt.inv(q)), Qt.ident())))
+}
+
+function convertToMatrix(t: Assert) {
+    check(t, "Quat: rotation around x axis", fc.property(fc.float(), a =>
+        {
+            let q = Qt.fromAxisAngle(a, [1, 0, 0])
+            let m1 = Mat.rotationX<Mat.Mat3>(3, a)
+            let m2 = Qt.toMatrix(q)
+            return Mat.approxEquals(m1, m2)
+        }))
+}
+
 test("quaternion multiplication", multiply)
+test("quaternion normalization and inverse", normalize)
+test("convert quaternion to matrix", convertToMatrix)

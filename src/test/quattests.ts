@@ -50,7 +50,7 @@ function multiply(t: Assert) {
 function normalize(t: Assert) {
     let arbq = arbQuat()
 
-    check(t, "Quat: |norm(q)| = 1", fc.property(arbq, q => 
+    check(t, "Quat: |norm(q)| = 1", fc.property(arbq, q =>
         FMath.approxEquals(Qt.len(Qt.norm(q)), 1)))
 
     check(t, "Quat: q ⋅ q⁻¹ = [1, [0 0 0]]", fc.property(arbq, q =>
@@ -58,13 +58,21 @@ function normalize(t: Assert) {
 }
 
 function convertToMatrix(t: Assert) {
-    check(t, "Quat: rotation around x axis", fc.property(fc.float(), a =>
-        {
-            let q = Qt.fromAxisAngle(a, [1, 0, 0])
-            let m1 = Mat.rotationX<Mat.Mat3>(3, a)
-            let m2 = Qt.toMatrix(q)
-            return Mat.approxEquals(m1, m2)
-        }))
+    check(t, "Quat: rotation around x axis", fc.property(fc.float(), a => {
+        let q = Qt.fromAxisAngle(a, [1, 0, 0])
+        let m = Mat.rotationX<Mat.Mat3>(3, a)
+        return Mat.approxEquals(m, Qt.toMatrix(q))
+    }))
+    check(t, "Quat: rotation around y axis", fc.property(fc.float(), a => {
+        let q = Qt.fromAxisAngle(a, [0, 1, 0])
+        let m = Mat.rotationY<Mat.Mat3>(3, a)
+        return Mat.approxEquals(m, Qt.toMatrix(q))
+    }))
+    check(t, "Quat: rotation around z axis", fc.property(fc.float(), a => {
+        let q = Qt.fromAxisAngle(a, [0, 0, 1])
+        let m = Mat.rotationZ<Mat.Mat3>(3, a)
+        return Mat.approxEquals(m, Qt.toMatrix(q))
+    }))
 }
 
 test("quaternion multiplication", multiply)

@@ -12,9 +12,8 @@ JS/TS project that needs vector math.
 
 Features include:
 
-- Vectors of any length, although explicit types are defined for 2D, 3D, and 4D
-  vectors.
-- Matrices of any dimensions. Square matrices, 2×2, 3×3, and 4×4 matrices have
+- 2D, 3D, and 4D vectors.
+- Matrices of any dimensions _n×m_. Square matrices, 2×2, 3×3, and 4×4 matrices have
   their own subtypes.
 - Quaternions.
 

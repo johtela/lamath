@@ -1,11 +1,11 @@
 import { test } from "lits-extras/lib/tester"
 import { Assert } from "zora"
 import * as fc from "fast-check"
+import * as FMath from "../fmath"
 import * as Vec from "../vec"
 import * as Mat from "../mat"
 import * as Qt from "../quat"
-import { check, arbQuat, arbRealQuat, arbPureQuat } from "./arbitrarytypes"
-import { FMath } from ".."
+import { check, arbQuat, arbRealQuat, arbPureQuat, arbVec } from "./arbitrarytypes"
 
 function multiply(t: Assert) {
     let arbrq = arbRealQuat()
@@ -75,6 +75,54 @@ function convertToMatrix(t: Assert) {
     }))
 }
 
+function rotate(t: Assert) {
+    let arbv = arbVec<Vec.Vec3>(3)
+
+    check(t, "Quat: rotate vector around x axis", fc.property(fc.float(), arbv,
+        (a, v) => {
+            let q = Qt.fromAxisAngle(a, [1, 0, 0])
+            let m = Mat.rotationX<Mat.Mat3>(3, a)
+            return Vec.approxEquals(Mat.transform(m, v), Qt.rotate(q, v))
+        }))
+
+    check(t, "Quat: rotate vector around z and then y axis", fc.property(
+        fc.float(), fc.float(), arbv, (a, b, v) => {
+            let q = Qt.mul(Qt.fromAxisAngle(b, [0, 1, 0]),
+                Qt.fromAxisAngle(a, [0, 0, 1]))
+            let m = <Mat.Mat3>Mat.mul(Mat.rotationY(3, b), Mat.rotationZ(3, a))
+            let qv = Qt.rotate(q, v)
+            let mv = Mat.transform(m, v)
+            return Vec.approxEquals(qv, mv)
+        }
+    ))
+}
+
+function isBetween([s, v]: Qt.Quat, [sl, vl]: Qt.Quat, [sh, vh]: Qt.Quat):
+    boolean {
+    let minv = Vec.min(vl, vh)
+    let maxv = Vec.max(vl, vh)
+    let mins = Math.min(sl, sh)
+    let maxs = Math.max(sl, sh)
+    return v.every((a, i) => a >= minv[i] && a <= maxv[i]) &&
+        s >= mins && s <= maxs
+}
+
+function lerp(t: Assert) {
+    let arbq = arbQuat()
+
+    check(t, "Quat: q₁ ≤ lerp(q₁, q₂, [0-1]) ≤ q₂", fc.property(arbq, arbq,
+        fc.float(0, 1), (q1, q2, a) => isBetween(Qt.lerp(q1, q2, a), q1, q2)))
+
+    check(t, "Quat: |slerp(q₁, q₂, [0-1])| ≈ 1", fc.property(arbq, arbq,
+        fc.float(0, 1), (q1, q2, a) => {
+            let res = Qt.slerp(q1, q2, a)
+            let len = Qt.len(res)
+            return FMath.approxEquals(len, 1, 0.01)
+        }))
+}
+
 test("quaternion multiplication", multiply)
 test("quaternion normalization and inverse", normalize)
 test("convert quaternion to matrix", convertToMatrix)
+test("rotate vectors by quoternion", rotate)
+test("quaternion lerping and slerping", lerp)

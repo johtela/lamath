@@ -4,10 +4,10 @@ import * as fc from "fast-check"
 import { approxEquals, fract } from "../fmath"
 import * as Vec from "../vec"
 import { Vector } from "../vec"
-import { check, arbvec } from "./arbitrarytypes"
+import { check, arbVec } from "./arbitrarytypes"
 
 function addAndSubtract(t: Assert, dim: number) {
-    let arb = arbvec(dim)
+    let arb = arbVec(dim)
     let zero = Vec.zero(dim)
 
     check(t, `Vec${dim}: v - v = ${Vec.toString(zero)}`,
@@ -23,7 +23,7 @@ function addAndSubtract(t: Assert, dim: number) {
 }
 
 function multiplyWithScalar(t: Assert, dim: number) {
-    let arb = arbvec(dim)
+    let arb = arbVec(dim)
 
     check(t, `Vec${dim}: |v * s| = |s| * |v|`, fc.property(
         arb, fc.float(), (v, s) =>
@@ -31,7 +31,7 @@ function multiplyWithScalar(t: Assert, dim: number) {
 }
 
 function multiplyWithVector(t: Assert, dim: number) {
-    let arb = arbvec(dim)
+    let arb = arbVec(dim)
 
     check(t, `Vec${dim}: v * s = v * [ ${'s '.repeat(dim)}]`,
         fc.property(arb, fc.float(), (v, s) =>
@@ -39,7 +39,7 @@ function multiplyWithVector(t: Assert, dim: number) {
 }
 
 function divideWithScalar(t: Assert, dim: number) {
-    let arb = arbvec(dim)
+    let arb = arbVec(dim)
 
     check(t, `Vec${dim}: v / s = v * (1 / s) when s ≠ 0`, fc.property(
         arb, fc.float().filter(s => s != 0), (v, s) =>
@@ -47,7 +47,7 @@ function divideWithScalar(t: Assert, dim: number) {
 }
 
 function normalize(t: Assert, dim: number) {
-    let arb = arbvec(dim)
+    let arb = arbVec(dim)
     let zero = Vec.zero(dim)
 
     check(t, `Vec${dim}: |norm (v)| = 1 when v ≠ ${Vec.toString(zero)}`,
@@ -56,7 +56,7 @@ function normalize(t: Assert, dim: number) {
 }
 
 function dotProduct(t: Assert, dim: number) {
-    let arb = arbvec(dim)
+    let arb = arbVec(dim)
     let zero = Vec.zero(dim)
 
     var nonzero = arb.filter(v => !Vec.equals(v, zero))
@@ -77,7 +77,7 @@ function dotProduct(t: Assert, dim: number) {
 
 function componentwiseOperation(t: Assert, dim: number, oper: string,
     vecOper: (v: Vector) => Vector, numOper: (n: number) => number) {
-    let arb = arbvec(dim)
+    let arb = arbVec(dim)
 
     check(t, `Vec${dim}: ${oper}(v) = [ ${oper}(x) ${oper}(y) ... ]`,
         fc.property(arb, v => Vec.equals(vecOper(v), <Vector>v.map(numOper))))
@@ -86,7 +86,7 @@ function componentwiseOperation(t: Assert, dim: number, oper: string,
 function componentwiseOperation2(t: Assert, dim: number, oper: string,
     vecOper: (v1: Vector, v2: Vector) => Vector,
     numOper: (n1: number, n2: number) => number) {
-    let arb = arbvec(dim)
+    let arb = arbVec(dim)
 
     check(t, `Vec${dim}: ${oper}(v₁, v₂) = [ ${oper}(x₁, x₂) ${oper}(y₁, y₂) ... ]`,
         fc.property(arb, arb, (v1, v2) =>
@@ -95,7 +95,7 @@ function componentwiseOperation2(t: Assert, dim: number, oper: string,
 }
 
 function clamp(t: Assert, dim: number) {
-    let arb = arbvec(dim)
+    let arb = arbVec(dim)
 
     check(t, `Vec${dim}: clamp(v, min, max) ⇒ [ c | c ≤ min, c ≤ max ]`,
         fc.property(arb, fc.float(), fc.float(), (v, n1, n2) => {
@@ -107,7 +107,7 @@ function clamp(t: Assert, dim: number) {
 }
 
 function mix(t: Assert, dim: number) {
-    let arb = arbvec(dim)
+    let arb = arbVec(dim)
 
     check(t, `Vec${dim}: mix(v₁, v₂, n ∈ [0, 1] ) ⇒ [ c | c ≥ min(c₁, c₂), c ≤ max(c₁, c₂) ]`,
         fc.property(arb, arb, fc.float(0, 1), (v1, v2, n) => {
@@ -119,7 +119,7 @@ function mix(t: Assert, dim: number) {
 }
 
 function steps(t: Assert, dim: number) {
-    let arb = arbvec(dim)
+    let arb = arbVec(dim)
 
     check(t, `Vec${dim}: step(v, n) = [ cᵢ | (vᵢ < n ∧ cᵢ = 0) ∨ cᵢ = 1 ]`,
         fc.property(arb, fc.float(), (v, n) => 
@@ -168,7 +168,7 @@ test("vector dot product", t => {
 
 test("vector3 cross product", t => {
     let zero = Vec.zero(3)
-    let nonzero = arbvec<Vec.Vec3>(3).filter(v => !Vec.equals(v, zero))
+    let nonzero = arbVec<Vec.Vec3>(3).filter(v => !Vec.equals(v, zero))
     check(t, `Vector3: norm(v₁) × norm(v₂) ⋅ norm(v₁ or v₂) ≈ 0 when v₁, v₂ ≠ [0 0 0]`,
         fc.property(nonzero, nonzero, (v1, v2) => {
             let v1n = Vec.norm(v1)

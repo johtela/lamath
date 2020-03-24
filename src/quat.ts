@@ -11,7 +11,7 @@ import { Mat3 } from "./mat"
  */
 export type Quat = [number, Vec3]
 
-const LERP_THRESHOLD = 0.99
+const LERP_THRESHOLD = 0.95
 
 export function ident(): Quat {
     return [1, [0, 0, 0]]
@@ -96,16 +96,19 @@ export function mul([s1, [x1, y1, z1]]: Quat, [s2, [x2, y2, z2]]: Quat): Quat {
 }
 
 export function rotate(quat: Quat, vec: Vec3): Vec3 {
-    return mul(mul(quat, [0, vec]), conj(quat))[1]
+    let q = isNorm(quat) ? quat : norm(quat)
+    return mul(mul(q, [0, vec]), conj(q))[1]
 }
 
 export function lerp([s1, v1]: Quat, [s2, v2]: Quat, interPos: number): Quat {
-    return norm([FMath.mix(s1, s2, interPos), Vec.mix(v1, v2, interPos)])
+    return [FMath.mix(s1, s2, interPos), Vec.mix(v1, v2, interPos)]
 }
 
-export function slerp([s1, uv1]: Quat, [s2, uv2]: Quat, interPos: number): Quat {
-    let v1 = <Vec4>[s1, ...uv1]
-    let v2 = <Vec4>[s2, ...uv2]
+export function slerp(quat1: Quat, quat2: Quat, interPos: number): Quat {
+    let q1 = isNorm(quat1) ? quat1 : norm(quat1)
+    let q2 = isNorm(quat2) ? quat2 : norm(quat2)
+    let v1 = <Vec4>[q1[0], ...q1[1]]
+    let v2 = <Vec4>[q2[0], ...q2[1]]
     let dot = Vec.dot(v1, v2)
     if (dot < 0) {
         Vec.inv(v1, v1)

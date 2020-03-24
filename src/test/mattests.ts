@@ -4,11 +4,11 @@ import * as fc from "fast-check"
 import { approxEquals } from "../fmath"
 import * as Vec from "../vec"
 import * as Mat from "../mat"
-import { check, arbvec, arbmat } from "./arbitrarytypes"
+import { check, arbVec, arbMat } from "./arbitrarytypes"
 
 function transformationIsLinear(t: Assert, dim: number) {
-    let arbm = arbmat(dim)
-    let arbv = arbvec(dim)
+    let arbm = arbMat(dim)
+    let arbv = arbVec(dim)
 
     check(t, `Mat${dim}: M(v₁) + M(v₂) = M(v₁ + v₂)`, fc.property(
         arbm, arbv, arbv, (m, v1, v2) =>
@@ -24,7 +24,7 @@ function transformationIsLinear(t: Assert, dim: number) {
 }
 
 function addAndSubtract(t: Assert, dim: number) {
-    let arb = arbmat(dim)
+    let arb = arbMat(dim)
     let zero = Mat.zero(dim, dim)
 
     check(t, `Mat${dim}: M - M = [ 0 ... ]`, fc.property(arb, m => 
@@ -35,7 +35,7 @@ function addAndSubtract(t: Assert, dim: number) {
 }
 
 function multiplyWithScalar(t: Assert, dim: number) {
-    let arb = arbmat(dim)
+    let arb = arbMat(dim)
 
     check(t, `Mat${dim}: M * s * (1 / s) = M when s ≠ 0`, fc.property(
         arb, fc.float().filter(s => s != 0), (m, s) => 
@@ -43,7 +43,7 @@ function multiplyWithScalar(t: Assert, dim: number) {
 }
 
 function transpose(t: Assert, dim: number) {
-    let arb = arbmat(dim)
+    let arb = arbMat(dim)
 
     check(t, `Mat${dim}: M.rows = Mᵀ.cols and M.cols = Mᵀ.rows`, 
         fc.property(arb, m => {
@@ -62,7 +62,7 @@ function transpose(t: Assert, dim: number) {
 }
 
 function matrixMultiply(t: Assert, dim: number) {
-    let arb = arbmat(dim)
+    let arb = arbMat(dim)
     let ident = Mat.identity(dim)
 
     check(t, `Mat${dim}: M * I = M`, fc.property(arb, m => 
@@ -75,7 +75,7 @@ function matrixMultiply(t: Assert, dim: number) {
 }
 
 function translation(t: Assert, dim: number) {
-    let arb = arbvec(dim)
+    let arb = arbVec(dim)
 
     check(t, `Mat${dim}: M(v₁) = v₁ + v₂ where M = translate (v₂)`, 
         fc.property(arb, arb, (v1, v2) => {
@@ -87,7 +87,7 @@ function translation(t: Assert, dim: number) {
 }
 
 function scaling(t: Assert, dim: number) {
-    let arb = arbvec(dim)
+    let arb = arbVec(dim)
 
     check(t, `Mat${dim}: M(v₁) = v₁ + v₂ where M = scale (v₂)`, fc.property(
         arb, arb, (v1, v2) => Vec.equals(
@@ -96,7 +96,7 @@ function scaling(t: Assert, dim: number) {
 }
 
 function rotationZ(t: Assert, dim: number) {
-    let arb = arbvec(dim)
+    let arb = arbVec(dim)
     let zero = Vec.zero(dim)
     let arbnz = arb.filter(v => !Vec.equals(v, zero))
 
@@ -116,7 +116,7 @@ function rotationZ(t: Assert, dim: number) {
 }
 
 function rotationXY(t: Assert, dim: number) {
-    let arb = arbvec(dim)
+    let arb = arbVec(dim)
     let zero = Vec.zero(dim)
     let arbnz = arb.filter(v => !Vec.equals(v, zero))
 
@@ -140,7 +140,7 @@ function rotationXY(t: Assert, dim: number) {
 
 function inverse(t: Assert, dim: number) {
     let ident = Mat.identity(dim)
-    let arb = arbmat(dim)
+    let arb = arbMat(dim)
 
     check(t, `Mat${dim}: M * M⁻¹ = I when det(M) ≠ 0`, fc.property(
         arb.filter(m => Mat.determinant(m) != 0), m => 

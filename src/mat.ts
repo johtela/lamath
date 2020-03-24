@@ -15,7 +15,7 @@ export type Mat4 = [number, number, number, number, number, number,
     number, number, number, number]
 export type SquareMatrix = Mat2 | Mat3 | Mat4
     
-const invalidElementCount = "There must be rows x cols elements in the array"
+const invalidElementCount = "There must be (rows × cols) elements in the array"
 
 export function dimensions(m: Matrix): [number, number] {
     return [m[0], m[1]]
@@ -222,13 +222,12 @@ export function mul(mat: Matrix, other: Matrix | number): Matrix {
     }
 }
 
-export function transform(mat: SquareMatrix, vec: Vector): Vector {
+export function transform<V extends Vector>(mat: SquareMatrix, vec: V): V {
     let cols = mat[1]
-    let len = vec.length
-    if (len < cols)
-        vec = Vec.redim(vec, cols)
+    if (vec.length < cols)
+        throw Error(`The vector should have ${cols} elements`)
     let vecm = [cols, 1, ...vec]
-    return <Vector>mul(mat, vecm).slice(2)
+    return <V>mul(mat, vecm).slice(2)
 }
 
 export function transpose(mat: Matrix): Matrix {

@@ -8,9 +8,14 @@
             "type": "node",
             "request": "launch",
             "name": "Run Tests",
-            "args": [ "${workspaceFolder}/${relativeFile}" ],
-            "runtimeArgs": ["-r", "ts-node/register"],
-            "internalConsoleOptions": "openOnSessionStart"
+            "program": "${workspaceFolder}/lib/test/cli-tests.js",
+            "args": [],
+            "internalConsoleOptions": "openOnSessionStart",
+            "preLaunchTask": "tsc: build - tsconfig.json",
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceFolder}/lib/**/*.js"
+            ]
         },
         {
             "type": "node",

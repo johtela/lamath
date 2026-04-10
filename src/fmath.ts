@@ -29,6 +29,15 @@ export function approxEquals(x: number, y: number,
         return diff / (absX + absY) < epsilon;
 }
 
+export function approxGE(x: number, y: number,
+    epsilon: number = 0.000001): boolean {
+    return x > y || approxEquals(x, y, epsilon)
+}        
+
+export function approxLE(x: number, y: number,
+    epsilon: number = 0.000001): boolean {
+    return x < y || approxEquals(x, y, epsilon)
+}        
 /**
  * Return the decimal part of a number. The integer part will be zero.
  * @param x The input number.

@@ -47,7 +47,7 @@ export function redim<M extends Matrix>(m: Matrix, rows: number, cols: number,
     let r = m[0]
     for (let i = 0; i < cols; ++i)
         for (let j = 0; j < rows; ++j)
-            res[i * rows + j + 2] = [i * r + j + 2] || pad; 
+            res[i * rows + j + 2] = m[i * r + j + 2] || pad; 
     return <M>res
 }
 

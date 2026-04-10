@@ -1,11 +1,12 @@
 {
     "compilerOptions": {
-      "target": "es2015",
-      "module": "commonjs",
-      "declaration": true,
-      "outDir": "./lib",
-      "strict": true
-    },
-    "include": ["src"],
-    "exclude": ["node_modules"]
-  }
+        "target": "esnext",
+        "module": "commonjs",
+        "declaration": true,
+        "rootDir": "./src",
+        "outDir": "./lib",
+        "strict": true,
+        "sourceMap": true,
+        "types": ["node"]
+    }
+}

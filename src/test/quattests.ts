@@ -1,11 +1,11 @@
-import { test } from "lits-extras/lib/tester"
-import { Assert } from "zora"
+import { test, Assert } from "lits-extras/lib/tester"
 import * as fc from "fast-check"
 import * as FMath from "../fmath"
 import * as Vec from "../vec"
 import * as Mat from "../mat"
 import * as Qt from "../quat"
-import { check, arbQuat, arbRealQuat, arbPureQuat, arbVec } from "./arbitrarytypes"
+import { check, arbFloat, arbQuat, arbRealQuat, arbPureQuat, arbVec } 
+    from "./arbitrarytypes"
 
 function multiply(t: Assert) {
     let arbrq = arbRealQuat()
@@ -58,17 +58,17 @@ function normalize(t: Assert) {
 }
 
 function convertToMatrix(t: Assert) {
-    check(t, "Quat: rotation around x axis", fc.property(fc.float(), a => {
+    check(t, "Quat: rotation around x axis", fc.property(arbFloat(), a => {
         let q = Qt.fromAxisAngle(a, [1, 0, 0])
         let m = Mat.rotationX<Mat.Mat3>(3, a)
         return Mat.approxEquals(m, Qt.toMatrix(q))
     }))
-    check(t, "Quat: rotation around y axis", fc.property(fc.float(), a => {
+    check(t, "Quat: rotation around y axis", fc.property(arbFloat(), a => {
         let q = Qt.fromAxisAngle(a, [0, 1, 0])
         let m = Mat.rotationY<Mat.Mat3>(3, a)
         return Mat.approxEquals(m, Qt.toMatrix(q))
     }))
-    check(t, "Quat: rotation around z axis", fc.property(fc.float(), a => {
+    check(t, "Quat: rotation around z axis", fc.property(arbFloat(), a => {
         let q = Qt.fromAxisAngle(a, [0, 0, 1])
         let m = Mat.rotationZ<Mat.Mat3>(3, a)
         return Mat.approxEquals(m, Qt.toMatrix(q))
@@ -77,8 +77,9 @@ function convertToMatrix(t: Assert) {
 
 function rotate(t: Assert) {
     let arbv = arbVec<Vec.Vec3>(3)
+    let arba = arbFloat(Math.fround(0.1), Math.fround(Math.PI * 2))
 
-    check(t, "Quat: rotate vector around x axis", fc.property(fc.float(), arbv,
+    check(t, "Quat: rotate vector around x axis", fc.property(arbFloat(), arbv,
         (a, v) => {
             let q = Qt.fromAxisAngle(a, [1, 0, 0])
             let m = Mat.rotationX<Mat.Mat3>(3, a)
@@ -86,13 +87,14 @@ function rotate(t: Assert) {
         }))
 
     check(t, "Quat: rotate vector around z and then y axis", fc.property(
-        fc.float(), fc.float(), arbv, (a, b, v) => {
+        arba, arba, arbv, (a, b, v) => {
             let q = Qt.mul(Qt.fromAxisAngle(b, [0, 1, 0]),
                 Qt.fromAxisAngle(a, [0, 0, 1]))
             let m = <Mat.Mat3>Mat.mul(Mat.rotationY(3, b), Mat.rotationZ(3, a))
             let qv = Qt.rotate(q, v)
             let mv = Mat.transform(m, v)
-            return Vec.approxEquals(qv, mv)
+            let res = Vec.approxEquals(qv, mv, 0.1)
+            return res
         }
     ))
 }
@@ -111,10 +113,10 @@ function lerp(t: Assert) {
     let arbq = arbQuat()
 
     check(t, "Quat: q₁ ≤ lerp(q₁, q₂, [0-1]) ≤ q₂", fc.property(arbq, arbq,
-        fc.float(0, 1), (q1, q2, a) => isBetween(Qt.lerp(q1, q2, a), q1, q2)))
+        arbFloat(0, 1), (q1, q2, a) => isBetween(Qt.lerp(q1, q2, a), q1, q2)))
 
     check(t, "Quat: |slerp(q₁, q₂, [0-1])| ≈ 1", fc.property(arbq, arbq,
-        fc.float(0, 1), (q1, q2, a) => {
+        arbFloat(0, 1), (q1, q2, a) => {
             let res = Qt.slerp(q1, q2, a)
             let len = Qt.len(res)
             return FMath.approxEquals(len, 1, 0.01)

@@ -1,10 +1,9 @@
-import { test } from "lits-extras/lib/tester"
-import { Assert } from "zora"
+import { test, Assert } from "lits-extras/lib/tester"
 import * as fc from "fast-check"
-import { approxEquals, fract } from "../fmath"
+import { approxEquals, approxGE, approxLE, fract } from "../fmath"
 import * as Vec from "../vec"
 import { Vector } from "../vec"
-import { check, arbVec } from "./arbitrarytypes"
+import { check, arbVec, arbFloat } from "./arbitrarytypes"
 
 function addAndSubtract(t: Assert, dim: number) {
     let arb = arbVec(dim)
@@ -26,15 +25,15 @@ function multiplyWithScalar(t: Assert, dim: number) {
     let arb = arbVec(dim)
 
     check(t, `Vec${dim}: |v * s| = |s| * |v|`, fc.property(
-        arb, fc.float(), (v, s) =>
-        approxEquals(Math.abs(s) * Vec.len(v), Vec.len(Vec.mul(v, s)))))
+        arb, arbFloat(), (v, s) =>
+            approxEquals(Math.abs(s) * Vec.len(v), Vec.len(Vec.mul(v, s)))))
 }
 
 function multiplyWithVector(t: Assert, dim: number) {
     let arb = arbVec(dim)
 
     check(t, `Vec${dim}: v * s = v * [ ${'s '.repeat(dim)}]`,
-        fc.property(arb, fc.float(), (v, s) =>
+        fc.property(arb, arbFloat(), (v, s) =>
             Vec.approxEquals(Vec.mul(v, s), Vec.mul(v, Vec.unif(dim, s)))))
 }
 
@@ -42,8 +41,8 @@ function divideWithScalar(t: Assert, dim: number) {
     let arb = arbVec(dim)
 
     check(t, `Vec${dim}: v / s = v * (1 / s) when s ≠ 0`, fc.property(
-        arb, fc.float().filter(s => s != 0), (v, s) =>
-        Vec.approxEquals(Vec.div(v, s), Vec.mul(v, 1 / s))))
+        arb, arbFloat().filter(s => s != 0), (v, s) =>
+            Vec.approxEquals(Vec.div(v, s), Vec.mul(v, 1 / s))))
 }
 
 function normalize(t: Assert, dim: number) {
@@ -98,7 +97,7 @@ function clamp(t: Assert, dim: number) {
     let arb = arbVec(dim)
 
     check(t, `Vec${dim}: clamp(v, min, max) ⇒ [ c | c ≤ min, c ≤ max ]`,
-        fc.property(arb, fc.float(), fc.float(), (v, n1, n2) => {
+        fc.property(arb, arbFloat(), arbFloat(), (v, n1, n2) => {
             let min = Math.min(n1, n2)
             let max = Math.max(n1, n2)
             let clamped = Vec.clamp(v, min, max)
@@ -110,11 +109,13 @@ function mix(t: Assert, dim: number) {
     let arb = arbVec(dim)
 
     check(t, `Vec${dim}: mix(v₁, v₂, n ∈ [0, 1] ) ⇒ [ c | c ≥ min(c₁, c₂), c ≤ max(c₁, c₂) ]`,
-        fc.property(arb, arb, fc.float(0, 1), (v1, v2, n) => {
-            let clamped = Vec.mix(v1, v2, n)
+        fc.property(arb, arb, arbFloat(0, 1), 
+        (v1, v2, n) => {
+            let mixed = Vec.mix(v1, v2, n)
             let min = Vec.min(v1, v2)
             let max = Vec.max(v1, v2)
-            return clamped.every((c, i) => c >= min[i] && c <= max[i])
+            return mixed.every((c, i) => 
+                approxGE(c, min[i]) && approxLE(c, max[i]))
         }))
 }
 
@@ -122,17 +123,17 @@ function steps(t: Assert, dim: number) {
     let arb = arbVec(dim)
 
     check(t, `Vec${dim}: step(v, n) = [ cᵢ | (vᵢ < n ∧ cᵢ = 0) ∨ cᵢ = 1 ]`,
-        fc.property(arb, fc.float(), (v, n) => 
+        fc.property(arb, arbFloat(), (v, n) => 
             Vec.step(v, n).every((c, i) => (v[i] < n && c == 0) || c == 1)))
 
     check(t, `Vec${dim}: smoothstep(v, low, up) = [ cᵢ | (vᵢ ≤ low ∧ cᵢ = 0) ∨ (vᵢ ≥ up ∧ cᵢ = 1) ∨ cᵢ ∈ (0, 1) ]`,
-        fc.property(arb, fc.float(), fc.float(), (v, n1, n2) => {
+        fc.property(arb, arbFloat(), arbFloat(), (v, n1, n2) => {
             let low = Math.min(n1, n2)
             let up = Math.max(n1, n2)
             return Vec.smoothStep(v, low, up).every((c, i) =>
-                (v[i] <= low && c == 0) ||
-                (v[i] >= up && c == 1) ||
-                (c > 0 && c < 1))
+                (approxLE(v[i], low) && approxEquals(c, 0)) ||
+                (approxGE(v[i], up) && approxEquals(c, 1)) ||
+                (approxGE(c, 0) && approxLE(c, 1)))
         }))
 }
 

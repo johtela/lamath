@@ -1,5 +1,4 @@
-import { test } from "lits-extras/lib/tester"
-import { Assert } from "zora"
+import { test, Assert } from "lits-extras/lib/tester"
 import * as fc from "fast-check"
 import { approxEquals } from "../fmath"
 import * as Vec from "../vec"
